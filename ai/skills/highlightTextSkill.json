@@ -1,0 +1,78 @@
+{
+  "name": "highlightTextSkill",
+  "description": "Allows users to highlight important lines in book chapters",
+  "purpose": "Implements text highlighting functionality with storage, visual design, and RAG integration",
+  "inputs": {
+    "text": {
+      "type": "string",
+      "description": "Text to highlight",
+      "required": true
+    },
+    "highlight_color": {
+      "type": "string",
+      "enum": ["yellow", "green", "blue", "orange", "pink"],
+      "description": "Color for the highlight",
+      "default": "yellow"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "ID of the user making the highlight",
+      "required": true
+    },
+    "chapter_id": {
+      "type": "string",
+      "description": "ID of the chapter being highlighted",
+      "required": true
+    },
+    "context": {
+      "type": "string",
+      "description": "Context around the highlighted text",
+      "default": ""
+    },
+    "locale": {
+      "type": "string",
+      "enum": ["en", "ur"],
+      "description": "Locale of the content",
+      "default": "en"
+    }
+  },
+  "outputs": {
+    "highlighted_text": {
+      "type": "string",
+      "description": "Text with highlight markup"
+    },
+    "highlight_id": {
+      "type": "string",
+      "description": "Unique ID for the highlight"
+    },
+    "storage_result": {
+      "type": "object",
+      "description": "Result of storing the highlight in database"
+    },
+    "success": {
+      "type": "boolean",
+      "description": "Whether highlighting was successful"
+    }
+  },
+  "implementation": {
+    "type": "function",
+    "handler": "highlightTextHandler",
+    "dependencies": [
+      "react-highlight-words",
+      "database-client",
+      "markdown-parser"
+    ]
+  },
+  "capabilities": [
+    "Text selection",
+    "Color customization",
+    "Persistent storage",
+    "RAG integration",
+    "Multi-language support"
+  ],
+  "configuration": {
+    "available_colors": ["#FFEB3B", "#4CAF50", "#2196F3", "#FF9800", "#E91E63"],
+    "storage_backend": "neon-serverless-postgres",
+    "max_highlights_per_chapter": 50
+  }
+}

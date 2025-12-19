@@ -1,0 +1,82 @@
+{
+  "name": "personalizeChapterSkill",
+  "description": "Adjusts chapter content based on user background",
+  "purpose": "Modifies chapter content to match user's software/hardware background and expertise level",
+  "inputs": {
+    "chapter_content": {
+      "type": "string",
+      "description": "Original chapter content",
+      "required": true
+    },
+    "user_background": {
+      "type": "object",
+      "description": "User's technical background information",
+      "properties": {
+        "expertise_level": {
+          "type": "string",
+          "enum": ["beginner", "intermediate", "advanced"]
+        },
+        "domain": {
+          "type": "string",
+          "enum": ["software", "hardware", "both", "other"]
+        },
+        "interests": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "chapter_metadata": {
+      "type": "object",
+      "description": "Chapter metadata including topic and difficulty"
+    },
+    "locale": {
+      "type": "string",
+      "enum": ["en", "ur"],
+      "description": "Locale of the content",
+      "default": "en"
+    }
+  },
+  "outputs": {
+    "personalized_content": {
+      "type": "string",
+      "description": "Personalized chapter content"
+    },
+    "modifications_made": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "List of modifications made"
+    },
+    "confidence": {
+      "type": "number",
+      "description": "Confidence level in personalization (0-1)"
+    },
+    "success": {
+      "type": "boolean",
+      "description": "Whether personalization was successful"
+    }
+  },
+  "implementation": {
+    "type": "function",
+    "handler": "personalizeChapterHandler",
+    "dependencies": [
+      "openai",
+      "natural-language-processing"
+    ]
+  },
+  "capabilities": [
+    "Content adaptation",
+    "Difficulty adjustment",
+    "Domain-specific examples",
+    "User interest alignment",
+    "Multi-language support"
+  ],
+  "configuration": {
+    "ai_model": "gpt-3.5-turbo",
+    "difficulty_mapping": {
+      "beginner": {"simplification": 0.8, "examples": 2},
+      "intermediate": {"simplification": 0.5, "examples": 1},
+      "advanced": {"simplification": 0.2, "examples": 0.5}
+    }
+  }
+}

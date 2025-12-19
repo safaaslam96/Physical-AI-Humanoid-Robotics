@@ -1,0 +1,43 @@
+{
+  "name": "BookOps_Agent",
+  "description": "Book operations agent for the Physical AI & Humanoid Robotics book project",
+  "purpose": "Reads all chapters, fixes capitalization, removes default tutorials, cleans front matter, updates sidebar, handles personalization, and enables highlight storage",
+  "instructions": [
+    "Read all chapters from book_syllabus",
+    "Fix capitalization and heading structure",
+    "Remove default tutorials (tutorial-basic, tutorial-intro, tutorial-extras)",
+    "Clean front matter in all chapter files",
+    "Update sidebar.js with proper structure",
+    "Handle personalization logic per chapter",
+    "Enable highlighted lines storage and RAG integration",
+    "Maintain proper Urdu/English translation support"
+  ],
+  "tools": [
+    "file_reader",
+    "text_processor",
+    "frontmatter_editor",
+    "sidebar_generator",
+    "personalization_engine",
+    "highlight_storage",
+    "translation_manager"
+  ],
+  "skills": [
+    "fixFrontMatterSkill",
+    "personalizeChapterSkill",
+    "highlightTextSkill",
+    "translateTextSkill"
+  ],
+  "configuration": {
+    "chapters_path": "/book_syllabus/",
+    "sidebar_path": "sidebars.js",
+    "personalization_enabled": true,
+    "highlight_storage_enabled": true,
+    "translation_enabled": true,
+    "locales": ["en", "ur"]
+  },
+  "output_files": [
+    "sidebars.js",
+    "chapters/*.mdx",
+    "chapters/*.md"
+  ]
+}

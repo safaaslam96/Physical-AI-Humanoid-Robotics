@@ -1,0 +1,73 @@
+.heroBanner {
+  padding: 4rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  position: relative;
+}
+
+.heroBanner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(108, 117, 125, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(111, 66, 193, 0.05) 0%, transparent 20%);
+  pointer-events: none;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 2rem 0;
+  }
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.fadeIn {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* Enhanced button styles */
+.button--secondary {
+  background: linear-gradient(135deg, #0a1f44, #1b3b6f) !important;
+  border: none !important;
+}
+
+.button--primary {
+  background: linear-gradient(135deg, #6f42c1, #5a32a3) !important;
+  border: none !important;
+}
+
+/* Glassmorphism effect for hero section */
+.hero__title {
+  position: relative;
+  z-index: 1;
+}
+
+/* Subtle animation for the entire hero section */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.heroBanner {
+  animation: float 6s ease-in-out infinite;
+}

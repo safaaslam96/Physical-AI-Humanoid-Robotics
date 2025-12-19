@@ -1,0 +1,44 @@
+{
+  "name": "NextJS_Agent",
+  "description": "Next.js development agent for the Physical AI & Humanoid Robotics book project",
+  "purpose": "Generates Next.js pages, dynamic routes, builds navbar with auth features, integrates RAG chatbot, applies theme colors, and adds highlighter pen UI",
+  "instructions": [
+    "Generate Next.js .tsx pages and dynamic routes",
+    "Create 4-module section",
+    "Build navbar with sign-in, sign-up, language toggle",
+    "Integrate RAG chatbot popup",
+    "Apply theme colors (dark mode: maroon #800000, light mode: soft #FFD6D6)",
+    "Generate footer component with Learn / Community / About sections",
+    "Add highlighter pen UI for chapter MDX pages"
+  ],
+  "tools": [
+    "nextjs_generator",
+    "page_builder",
+    "route_generator",
+    "component_integrator",
+    "theme_applier",
+    "chatbot_integrator"
+  ],
+  "skills": [
+    "generateTailwindComponentSkill",
+    "signupSigninSkill",
+    "highlightTextSkill"
+  ],
+  "configuration": {
+    "primary_color_dark": "#800000",
+    "primary_color_light": "#FFD6D6",
+    "auth_components": ["sign-in", "sign-up", "user-profile"],
+    "chatbot_enabled": true,
+    "highlighter_enabled": true,
+    "language_toggle": true
+  },
+  "output_pages": [
+    "pages/index.tsx",
+    "pages/auth/signin.tsx",
+    "pages/auth/signup.tsx",
+    "components/Navbar.tsx",
+    "components/Footer.tsx",
+    "components/Chatbot.tsx",
+    "components/Highlighter.tsx"
+  ]
+}

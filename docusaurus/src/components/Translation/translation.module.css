@@ -1,0 +1,66 @@
+.languageSelectorContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.languageSelectorDropdown {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background-color: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-emphasis-900);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all var(--ifm-transition-fast) ease;
+}
+
+.languageSelectorDropdown:hover {
+  border-color: var(--ifm-color-primary);
+}
+
+.languageSelectorDropdown:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 2px var(--ifm-color-primary-lighter);
+}
+
+.translationLoading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--ifm-color-content-secondary);
+}
+
+.loadingSpinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--ifm-color-emphasis-200);
+  border-top-color: var(--ifm-color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.translationStatus {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
+.translationStatus.success {
+  background-color: var(--ifm-color-success-lighter);
+  color: var(--ifm-color-success-dark);
+}
+
+.translationStatus.error {
+  background-color: var(--ifm-color-danger-lighter);
+  color: var(--ifm-color-danger-dark);
+}

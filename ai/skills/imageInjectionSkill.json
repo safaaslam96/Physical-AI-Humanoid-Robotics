@@ -1,0 +1,68 @@
+{
+  "name": "imageInjectionSkill",
+  "description": "Injects images into Markdown content with proper formatting",
+  "purpose": "Inserts specified images into Markdown content at designated positions with proper formatting and responsive design",
+  "inputs": {
+    "content": {
+      "type": "string",
+      "description": "Original Markdown content",
+      "required": true
+    },
+    "image_path": {
+      "type": "string",
+      "description": "Path to the image file",
+      "required": true
+    },
+    "position": {
+      "type": "string",
+      "enum": ["top", "bottom", "before_heading", "after_heading"],
+      "description": "Where to inject the image",
+      "default": "top"
+    },
+    "heading_target": {
+      "type": "string",
+      "description": "Target heading for before/after positioning",
+      "required": false
+    },
+    "alt_text": {
+      "type": "string",
+      "description": "Alternative text for the image",
+      "default": ""
+    },
+    "responsive": {
+      "type": "boolean",
+      "description": "Whether to make the image responsive",
+      "default": true
+    }
+  },
+  "outputs": {
+    "updated_content": {
+      "type": "string",
+      "description": "Content with injected image"
+    },
+    "image_added": {
+      "type": "boolean",
+      "description": "Whether image was successfully added"
+    }
+  },
+  "implementation": {
+    "type": "function",
+    "handler": "imageInjectionHandler",
+    "dependencies": [
+      "markdown-it",
+      "image-size"
+    ]
+  },
+  "capabilities": [
+    "Position-based injection",
+    "Responsive design",
+    "Alt text handling",
+    "Markdown formatting preservation",
+    "Image optimization"
+  ],
+  "configuration": {
+    "supported_formats": ["png", "jpg", "jpeg", "gif", "webp"],
+    "max_width": "100%",
+    "responsive_class": "img-responsive"
+  }
+}

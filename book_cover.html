@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physical AI and Humanoid Robotics - Book Cover</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 1600px;
+            height: 2400px;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+        }
+
+        .cover-container {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0A1F44 0%, #1B3B6F 100%);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 80px 60px;
+        }
+
+        /* Background Elements */
+        .grid-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+
+        .floating-dots {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .dot {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(167, 139, 250, 0.6);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+        }
+
+        /* Glassmorphism Panel */
+        .glass-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 1000px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        /* Title Section */
+        .title-section {
+            text-align: center;
+            z-index: 3;
+            width: 100%;
+            margin-top: 60px;
+        }
+
+        .main-title {
+            font-size: 72px;
+            font-weight: 700;
+            color: #FFFFFF;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.6),
+                         0 0 40px rgba(139, 92, 246, 0.3);
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 32px;
+            color: #E0F2FE;
+            text-align: center;
+            margin-top: 20px;
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+            font-weight: 300;
+        }
+
+        /* Central Robot Visual */
+        .robot-visual {
+            position: relative;
+            width: 600px;
+            height: 800px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 4;
+            margin: 40px 0;
+        }
+
+        .robot-wireframe {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Robot body parts */
+        .robot-head {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            border: 3px solid #8B5CF6;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
+        }
+
+        .robot-body {
+            position: absolute;
+            top: 190px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 200px;
+            border: 3px solid #8B5CF6;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+        }
+
+        .robot-arm.left {
+            position: absolute;
+            top: 200px;
+            left: 30%;
+            width: 150px;
+            height: 10px;
+            background: #8B5CF6;
+            transform: rotate(-30deg);
+            transform-origin: right center;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+
+        .robot-arm.right {
+            position: absolute;
+            top: 200px;
+            right: 30%;
+            width: 150px;
+            height: 10px;
+            background: #8B5CF6;
+            transform: rotate(30deg);
+            transform-origin: left center;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+
+        .robot-leg.left {
+            position: absolute;
+            top: 390px;
+            left: 42%;
+            width: 10px;
+            height: 180px;
+            background: #8B5CF6;
+            transform: rotate(5deg);
+            transform-origin: top center;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+
+        .robot-leg.right {
+            position: absolute;
+            top: 390px;
+            right: 42%;
+            width: 10px;
+            height: 180px;
+            background: #8B5CF6;
+            transform: rotate(-5deg);
+            transform-origin: top center;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+
+        /* Circuit patterns */
+        .circuit-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+        }
+
+        .circuit-line {
+            stroke: #A78BFA;
+            stroke-width: 1;
+            fill: none;
+            opacity: 0.6;
+        }
+
+        /* Neural network connections */
+        .neural-nodes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .neural-node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #A78BFA;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #A78BFA;
+        }
+
+        .neural-connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #A78BFA, transparent);
+            transform-origin: left center;
+        }
+
+        /* Bottom Section */
+        .bottom-section {
+            text-align: center;
+            z-index: 3;
+            width: 100%;
+            margin-bottom: 80px;
+        }
+
+        .author-info {
+            font-size: 28px;
+            color: #E0F2FE;
+            margin-bottom: 40px;
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+        }
+
+        .feature-icons {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #A78BFA;
+        }
+
+        .icon-shape {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #A78BFA;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+        }
+
+        .icon-label {
+            font-size: 14px;
+            color: #E0F2FE;
+            text-align: center;
+        }
+
+        /* Animation classes */
+        .pulse {
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { box-shadow: 0 0 20px rgba(139, 92, 246, 0.6); }
+            to { box-shadow: 0 0 40px rgba(139, 92, 246, 0.9); }
+        }
+
+        .glow {
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
+            to { text-shadow: 0 0 30px rgba(139, 92, 246, 0.8); }
+        }
+    </style>
+</head>
+<body>
+    <div class="cover-container">
+        <!-- Background Elements -->
+        <div class="grid-lines"></div>
+        <div class="floating-dots" id="floatingDots"></div>
+
+        <!-- Glassmorphism Panel -->
+        <div class="glass-panel"></div>
+
+        <!-- Title Section -->
+        <div class="title-section">
+            <h1 class="main-title glow">Physical AI and<br>Humanoid Robotics</h1>
+            <div class="subtitle">Embodied Intelligence for the Future</div>
+        </div>
+
+        <!-- Central Robot Visual -->
+        <div class="robot-visual">
+            <div class="robot-wireframe">
+                <div class="robot-head pulse"></div>
+                <div class="robot-body"></div>
+                <div class="robot-arm left"></div>
+                <div class="robot-arm right"></div>
+                <div class="robot-leg left"></div>
+                <div class="robot-leg right"></div>
+
+                <!-- Circuit Pattern SVG -->
+                <svg class="circuit-pattern" viewBox="0 0 600 800">
+                    <path class="circuit-line" d="M100,100 Q200,50 300,100 T500,100"/>
+                    <path class="circuit-line" d="M100,200 Q300,150 500,200"/>
+                    <path class="circuit-line" d="M100,300 Q200,350 300,300 T500,300"/>
+                    <path class="circuit-line" d="M100,400 Q300,450 500,400"/>
+                    <circle cx="150" cy="150" r="5" class="circuit-line"/>
+                    <circle cx="250" cy="250" r="5" class="circuit-line"/>
+                    <circle cx="350" cy="350" r="5" class="circuit-line"/>
+                    <circle cx="450" cy="450" r="5" class="circuit-line"/>
+                </svg>
+
+                <!-- Neural Network Connections -->
+                <div class="neural-nodes" id="neuralNodes"></div>
+            </div>
+        </div>
+
+        <!-- Bottom Section -->
+        <div class="bottom-section">
+            <div class="author-info">AI-Powered Interactive Book</div>
+
+            <div class="feature-icons">
+                <div class="icon">
+                    <div class="icon-shape">🎮</div>
+                    <div class="icon-label">Interactive Content</div>
+                </div>
+                <div class="icon">
+                    <div class="icon-shape">🤖</div>
+                    <div class="icon-label">RAG Chatbot</div>
+                </div>
+                <div class="icon">
+                    <div class="icon-shape">🎯</div>
+                    <div class="icon-label">Personalization</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate floating dots
+        const floatingDotsContainer = document.getElementById('floatingDots');
+        for (let i = 0; i < 50; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            dot.style.left = Math.random() * 100 + '%';
+            dot.style.top = Math.random() * 100 + '%';
+            dot.style.animationDelay = Math.random() * 6 + 's';
+            floatingDotsContainer.appendChild(dot);
+        }
+
+        // Generate neural network connections
+        const neuralNodesContainer = document.getElementById('neuralNodes');
+        const nodePositions = [];
+
+        // Create random positions for neural nodes
+        for (let i = 0; i < 20; i++) {
+            const x = Math.random() * 600;
+            const y = Math.random() * 800;
+            nodePositions.push({x, y});
+
+            const node = document.createElement('div');
+            node.className = 'neural-node';
+            node.style.left = x + 'px';
+            node.style.top = y + 'px';
+            neuralNodesContainer.appendChild(node);
+        }
+
+        // Create connections between nearby nodes
+        for (let i = 0; i < nodePositions.length; i++) {
+            for (let j = i + 1; j < nodePositions.length; j++) {
+                const dist = Math.sqrt(
+                    Math.pow(nodePositions[i].x - nodePositions[j].x, 2) +
+                    Math.pow(nodePositions[i].y - nodePositions[j].y, 2)
+                );
+
+                if (dist < 150) {
+                    const angle = Math.atan2(
+                        nodePositions[j].y - nodePositions[i].y,
+                        nodePositions[j].x - nodePositions[i].x
+                    );
+
+                    const connection = document.createElement('div');
+                    connection.className = 'neural-connection';
+                    connection.style.width = dist + 'px';
+                    connection.style.left = nodePositions[i].x + 'px';
+                    connection.style.top = nodePositions[i].y + 'px';
+                    connection.style.transform = `rotate(${angle}rad)`;
+                    neuralNodesContainer.appendChild(connection);
+                }
+            }
+        }
+
+        // Animate neural connections
+        setInterval(() => {
+            const connections = document.querySelectorAll('.neural-connection');
+            connections.forEach(conn => {
+                conn.style.opacity = 0.3 + Math.random() * 0.4;
+            });
+        }, 1000);
+    </script>
+</body>
+</html>

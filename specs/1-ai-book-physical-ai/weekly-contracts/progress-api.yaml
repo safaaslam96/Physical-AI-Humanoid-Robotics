@@ -1,0 +1,282 @@
+openapi: 3.0.0
+info:
+  title: Weekly Progress Tracking API
+  description: API for tracking progress during the 13-week development plan
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api/progress
+    description: Local development server
+paths:
+  /weekly-status:
+    get:
+      summary: Get weekly progress status
+      description: Retrieve progress information for a specific week
+      parameters:
+        - name: week_number
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 13
+          description: The week number to retrieve status for
+      responses:
+        '200':
+          description: Weekly progress status retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - week_number
+                  - status
+                  - completed_tasks
+                  - in_progress_tasks
+                  - blocked_tasks
+                properties:
+                  week_number:
+                    type: integer
+                    example: 3
+                  status:
+                    type: string
+                    enum: [on_track, delayed, ahead, at_risk]
+                    example: "on_track"
+                  completed_tasks:
+                    type: integer
+                    description: Number of completed tasks
+                    example: 4
+                  in_progress_tasks:
+                    type: integer
+                    description: Number of tasks in progress
+                    example: 2
+                  blocked_tasks:
+                    type: integer
+                    description: Number of blocked tasks
+                    example: 0
+                  overall_progress:
+                    type: number
+                    format: float
+                    description: Overall progress percentage for the week
+                    example: 80.0
+        '400':
+          description: Bad request - invalid week number
+        '500':
+          description: Internal server error
+    post:
+      summary: Update weekly progress status
+      description: Submit progress information for a specific week
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - week_number
+                - status
+                - completed_tasks
+                - in_progress_tasks
+                - blocked_tasks
+              properties:
+                week_number:
+                  type: integer
+                  minimum: 1
+                  maximum: 13
+                  example: 3
+                status:
+                  type: string
+                  enum: [on_track, delayed, ahead, at_risk]
+                  example: "on_track"
+                completed_tasks:
+                  type: integer
+                  example: 4
+                in_progress_tasks:
+                  type: integer
+                  example: 2
+                blocked_tasks:
+                  type: integer
+                  example: 0
+                issues_identified:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Dependency delay on backend API", "Performance issue with RAG service"]
+                next_week_focus:
+                  type: string
+                  example: "Complete personalization engine, resolve backend dependency"
+      responses:
+        '200':
+          description: Weekly progress updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Week 3 progress updated successfully"
+        '400':
+          description: Bad request - invalid data
+        '500':
+          description: Internal server error
+  /milestones:
+    get:
+      summary: Get milestone status
+      description: Retrieve status of all milestones across the 13-week plan
+      responses:
+        '200':
+          description: Milestone status retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  milestones:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - id
+                        - title
+                        - week_number
+                        - status
+                        - type
+                      properties:
+                        id:
+                          type: string
+                          example: "ms-001"
+                        title:
+                          type: string
+                          example: "Authentication System Complete"
+                        week_number:
+                          type: integer
+                          minimum: 1
+                          maximum: 13
+                          example: 2
+                        status:
+                          type: string
+                          enum: [pending, in_progress, achieved, delayed]
+                          example: "achieved"
+                        type:
+                          type: string
+                          enum: [feature, integration, testing, deployment]
+                          example: "feature"
+                        deliverable:
+                          type: string
+                          example: "Working authentication system with user profile management"
+        '500':
+          description: Internal server error
+    post:
+      summary: Update milestone status
+      description: Update the status of a specific milestone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - milestone_id
+                - status
+              properties:
+                milestone_id:
+                  type: string
+                  example: "ms-001"
+                status:
+                  type: string
+                  enum: [pending, in_progress, achieved, delayed]
+                  example: "achieved"
+                notes:
+                  type: string
+                  description: Additional notes about milestone status
+                  example: "All acceptance criteria met, ready for next phase"
+      responses:
+        '200':
+          description: Milestone status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Milestone ms-001 status updated to achieved"
+        '400':
+          description: Bad request - invalid milestone ID or status
+        '404':
+          description: Milestone not found
+        '500':
+          description: Internal server error
+  /tasks:
+    get:
+      summary: Get tasks for a week
+      description: Retrieve all tasks for a specific week
+      parameters:
+        - name: week_number
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 13
+          description: The week number to retrieve tasks for
+      responses:
+        '200':
+          description: Tasks retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - id
+                        - title
+                        - status
+                        - priority
+                        - estimated_hours
+                      properties:
+                        id:
+                          type: string
+                          example: "task-001"
+                        title:
+                          type: string
+                          example: "Set up development environment"
+                        description:
+                          type: string
+                          example: "Configure local development environment with all required dependencies"
+                        status:
+                          type: string
+                          enum: [pending, in_progress, completed, blocked]
+                          example: "completed"
+                        priority:
+                          type: string
+                          enum: [low, medium, high, critical]
+                          example: "high"
+                        estimated_hours:
+                          type: integer
+                          example: 8
+                        actual_hours:
+                          type: integer
+                          example: 6
+                        assignee:
+                          type: string
+                          example: "developer-01"
+                        dependencies:
+                          type: array
+                          items:
+                            type: string
+                          example: ["task-000"]
+        '400':
+          description: Bad request - invalid week number
+        '500':
+          description: Internal server error

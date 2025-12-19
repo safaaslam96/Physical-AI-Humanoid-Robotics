@@ -1,0 +1,84 @@
+{
+  "name": "createChatbotMemorySkill",
+  "description": "Creates embeddings JSON for RAG chatbot",
+  "purpose": "Generates vector embeddings and metadata for RAG (Retrieval Augmented Generation) chatbot system",
+  "inputs": {
+    "content": {
+      "type": "string",
+      "description": "Content to create embeddings for",
+      "required": true
+    },
+    "content_id": {
+      "type": "string",
+      "description": "Unique identifier for the content",
+      "required": true
+    },
+    "content_type": {
+      "type": "string",
+      "enum": ["chapter", "summary", "highlight", "user_query"],
+      "description": "Type of content",
+      "default": "chapter"
+    },
+    "locale": {
+      "type": "string",
+      "enum": ["en", "ur"],
+      "description": "Locale of the content",
+      "default": "en"
+    },
+    "chunk_size": {
+      "type": "number",
+      "description": "Size of content chunks for embedding",
+      "default": 1000
+    },
+    "overlap": {
+      "type": "number",
+      "description": "Overlap between chunks",
+      "default": 200
+    }
+  },
+  "outputs": {
+    "embeddings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "content": {"type": "string"},
+          "embedding": {"type": "array", "items": {"type": "number"}},
+          "metadata": {"type": "object"}
+        }
+      },
+      "description": "Generated embeddings with metadata"
+    },
+    "total_chunks": {
+      "type": "number",
+      "description": "Total number of content chunks"
+    },
+    "success": {
+      "type": "boolean",
+      "description": "Whether embedding generation was successful"
+    }
+  },
+  "implementation": {
+    "type": "function",
+    "handler": "createChatbotMemoryHandler",
+    "dependencies": [
+      "openai",
+      "qdrant-client",
+      "sentence-transformers"
+    ]
+  },
+  "capabilities": [
+    "Vector embedding generation",
+    "Content chunking",
+    "Metadata management",
+    "Multi-language support",
+    "Similarity search preparation"
+  ],
+  "configuration": {
+    "embedding_model": "text-embedding-ada-002",
+    "chunk_size": 1000,
+    "overlap": 200,
+    "vector_db": "qdrant"
+  }
+}

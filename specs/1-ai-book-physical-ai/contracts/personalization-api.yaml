@@ -1,0 +1,169 @@
+openapi: 3.0.0
+info:
+  title: Personalization API
+  description: API for chapter personalization based on user profile
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api
+    description: Local development server
+paths:
+  /personalize/chapter:
+    post:
+      summary: Personalize a chapter
+      description: Generate a personalized version of a chapter based on user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chapter_id
+                - user_id
+              properties:
+                chapter_id:
+                  type: string
+                  description: The chapter ID to personalize
+                  example: "ch001-intro-physical-ai"
+                user_id:
+                  type: string
+                  description: The user ID to personalize for
+                  example: "user-123-abc"
+                difficulty_override:
+                  type: string
+                  description: Optional override for difficulty level
+                  enum: [beginner, intermediate, advanced, balanced]
+                  example: "intermediate"
+      responses:
+        '200':
+          description: Chapter personalized successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - personalized_content
+                  - applied_modifications
+                properties:
+                  personalized_content:
+                    type: string
+                    description: The personalized chapter content
+                    example: "# Introduction to Physical AI (Simplified)\n\nPhysical AI is the combination of..."
+                  applied_modifications:
+                    type: object
+                    description: Details about what personalization was applied
+                    properties:
+                      difficulty_level:
+                        type: string
+                        example: "intermediate"
+                      examples_modified:
+                        type: boolean
+                        example: true
+                      explanations_simplified:
+                        type: boolean
+                        example: true
+                      technical_depth:
+                        type: string
+                        example: "reduced"
+        '400':
+          description: Bad request - missing required fields or invalid user profile
+        '404':
+          description: Chapter not found
+        '500':
+          description: Internal server error
+  /personalize/profile:
+    post:
+      summary: Update user profile for personalization
+      description: Update the user's profile information used for personalization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+              properties:
+                user_id:
+                  type: string
+                  description: The user ID
+                  example: "user-123-abc"
+                software_background:
+                  type: string
+                  description: User's software development experience
+                  enum: [beginner, intermediate, advanced]
+                  example: "intermediate"
+                hardware_background:
+                  type: string
+                  description: User's hardware/robotics experience
+                  enum: [beginner, intermediate, advanced]
+                  example: "beginner"
+                learning_goals:
+                  type: string
+                  description: User's learning objectives
+                  example: "Understanding humanoid robot control systems"
+                difficulty_preference:
+                  type: string
+                  description: Preferred content difficulty
+                  enum: [beginner, intermediate, advanced, balanced]
+                  example: "intermediate"
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Profile updated successfully"
+        '400':
+          description: Bad request - invalid field values
+        '404':
+          description: User not found
+        '500':
+          description: Internal server error
+  /personalize/clear-cache:
+    post:
+      summary: Clear personalized chapter cache
+      description: Remove cached personalized versions for a user/chapter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - chapter_id
+              properties:
+                user_id:
+                  type: string
+                  description: The user ID
+                  example: "user-123-abc"
+                chapter_id:
+                  type: string
+                  description: The chapter ID
+                  example: "ch001-intro-physical-ai"
+      responses:
+        '200':
+          description: Cache cleared successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Personalized chapter cache cleared"
+        '400':
+          description: Bad request - missing required fields
+        '500':
+          description: Internal server error

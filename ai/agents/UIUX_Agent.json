@@ -1,0 +1,44 @@
+{
+  "name": "UIUX_Agent",
+  "description": "UI/UX design agent for the Physical AI & Humanoid Robotics book project",
+  "purpose": "Creates maroon-based dark mode and soft complementary light mode, generates Tailwind components, builds homepage layout with hero section, footer, and highlighter pen feature",
+  "instructions": [
+    "Create maroon-based dark mode with primary color #800000",
+    "Create soft complementary light mode with color #FFD6D6",
+    "Generate Tailwind components (buttons, cards, navbar, grids, footer, highlighter)",
+    "Build homepage layout with hero section: left cover image, right title + buttons",
+    "Create footer with Learn / Community / About links",
+    "Implement highlighter pen with modern design and easy-to-use interface",
+    "Ensure responsive and mobile-friendly design"
+  ],
+  "tools": [
+    "tailwind_generator",
+    "component_builder",
+    "layout_designer",
+    "responsive_designer",
+    "color_scheme_applier"
+  ],
+  "skills": [
+    "generateTailwindComponentSkill"
+  ],
+  "configuration": {
+    "primary_color_dark": "#800000",
+    "primary_color_light": "#FFD6D6",
+    "hero_layout": {
+      "image_position": "left",
+      "content_position": "right",
+      "buttons": ["Start Reading", "Explore Modules"]
+    },
+    "footer_sections": ["Learn", "Community", "About"],
+    "highlighter_colors": ["#FFEB3B", "#4CAF50", "#2196F3", "#FF9800", "#E91E63"]
+  },
+  "output_components": [
+    "Navbar",
+    "HeroSection",
+    "Footer",
+    "HighlighterPen",
+    "ButtonModule",
+    "CardComponent",
+    "GridComponent"
+  ]
+}

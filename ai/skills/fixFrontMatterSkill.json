@@ -1,0 +1,62 @@
+{
+  "name": "fixFrontMatterSkill",
+  "description": "Auto-corrects front matter, titles, and sidebar labels in Markdown files",
+  "purpose": "Automatically fixes front matter in Markdown files to ensure proper titles, sidebar labels, and consistent formatting",
+  "inputs": {
+    "file_path": {
+      "type": "string",
+      "description": "Path to the Markdown file",
+      "required": true
+    },
+    "content": {
+      "type": "string",
+      "description": "Full content of the Markdown file",
+      "required": true
+    },
+    "locale": {
+      "type": "string",
+      "enum": ["en", "ur"],
+      "description": "Locale for the file",
+      "default": "en"
+    },
+    "auto_generate_sidebar_label": {
+      "type": "boolean",
+      "description": "Whether to auto-generate sidebar label from title",
+      "default": true
+    }
+  },
+  "outputs": {
+    "fixed_content": {
+      "type": "string",
+      "description": "Fixed content with corrected front matter"
+    },
+    "frontmatter": {
+      "type": "object",
+      "description": "Parsed and fixed front matter object"
+    },
+    "success": {
+      "type": "boolean",
+      "description": "Whether the fix was successful"
+    }
+  },
+  "implementation": {
+    "type": "function",
+    "handler": "fixFrontMatterHandler",
+    "dependencies": [
+      "front-matter",
+      "yaml"
+    ]
+  },
+  "capabilities": [
+    "Title capitalization",
+    "Sidebar label generation",
+    "YAML validation",
+    "Consistent formatting",
+    "Locale-specific handling"
+  ],
+  "configuration": {
+    "title_capitalization": "sentence",
+    "sidebar_label_prefix": "",
+    "required_fields": ["title", "sidebar_label"]
+  }
+}

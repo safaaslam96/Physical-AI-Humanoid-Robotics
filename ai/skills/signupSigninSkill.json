@@ -1,0 +1,74 @@
+{
+  "name": "signupSigninSkill",
+  "description": "Integrates Better Auth for signup/signin with user background collection",
+  "purpose": "Implements authentication system that collects user software/hardware background information",
+  "inputs": {
+    "user_data": {
+      "type": "object",
+      "description": "User information from signup/signin",
+      "properties": {
+        "email": {"type": "string"},
+        "name": {"type": "string"},
+        "background": {
+          "type": "object",
+          "properties": {
+            "domain": {"type": "string"},
+            "expertise_level": {"type": "string"},
+            "interests": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    },
+    "auth_method": {
+      "type": "string",
+      "enum": ["email", "google", "github", "credentials"],
+      "description": "Authentication method",
+      "default": "email"
+    },
+    "database_connection": {
+      "type": "string",
+      "description": "Database connection string",
+      "default": "neon://..."
+    }
+  },
+  "outputs": {
+    "auth_result": {
+      "type": "object",
+      "description": "Authentication result with user info"
+    },
+    "user_profile": {
+      "type": "object",
+      "description": "User profile with background information"
+    },
+    "session_token": {
+      "type": "string",
+      "description": "Session token for authenticated user"
+    },
+    "success": {
+      "type": "boolean",
+      "description": "Whether authentication was successful"
+    }
+  },
+  "implementation": {
+    "type": "function",
+    "handler": "signupSigninHandler",
+    "dependencies": [
+      "better-auth",
+      "neon-serverless-postgres",
+      "next-auth"
+    ]
+  },
+  "capabilities": [
+    "User registration",
+    "Background collection",
+    "Session management",
+    "Database integration",
+    "Security features"
+  ],
+  "configuration": {
+    "auth_provider": "better-auth",
+    "database": "neon-serverless-postgres",
+    "background_fields": ["domain", "expertise_level", "interests"],
+    "session_duration": 86400
+  }
+}

@@ -1,0 +1,218 @@
+/* Book cover section */
+.bookCoverSection {
+  padding: 4rem 2rem;
+  background: var(--ifm-color-emphasis-100);
+}
+
+[data-theme='dark'] .bookCoverSection {
+  background: var(--ifm-background-color);
+}
+
+.bookCoverLayout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  padding: 2rem 0;
+}
+
+@media screen and (max-width: 996px) {
+  .bookCoverLayout {
+    flex-direction: column;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .bookInfo {
+    text-align: center;
+  }
+}
+
+.bookCoverImage {
+  flex: 1;
+  max-width: 400px;
+}
+
+.bookInfo {
+  flex: 1;
+  text-align: left;
+}
+
+.bookTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--ifm-heading-color);
+}
+
+.bookDescription {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  color: var(--ifm-font-color-base);
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+
+@media screen and (max-width: 996px) {
+  .ctaButtons {
+    justify-content: center;
+  }
+}
+
+.primaryButton {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-accent) 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(128, 0, 0, 0.3);
+}
+
+.primaryButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(128, 0, 0, 0.4);
+  background: linear-gradient(135deg, var(--ifm-color-primary-darker) 0%, var(--ifm-color-accent) 100%);
+}
+
+.secondaryButton {
+  background: transparent;
+  color: var(--ifm-color-primary);
+  border: 2px solid var(--ifm-color-primary);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.secondaryButton:hover {
+  background: rgba(128, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
+
+/* Modules section */
+.modulesSection {
+  padding: 4rem 2rem;
+  background: var(--ifm-background-color);
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--ifm-heading-color);
+}
+
+.sectionSubtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 3rem;
+}
+
+.modulesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.moduleCard {
+  background: var(--ifm-card-background-color);
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: var(--ifm-card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 2rem;
+  text-align: center;
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.moduleCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.moduleIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--ifm-color-primary);
+}
+
+.moduleTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--ifm-heading-color);
+}
+
+.moduleDescription {
+  color: var(--ifm-font-color-base);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+/* Chapters section */
+.chaptersSection {
+  padding: 4rem 2rem;
+  background: var(--ifm-color-emphasis-100);
+}
+
+[data-theme='dark'] .chaptersSection {
+  background: var(--ifm-background-color);
+}
+
+.chaptersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.chapterCard {
+  background: var(--ifm-card-background-color);
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: var(--ifm-card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 1.5rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.chapterCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.chapterNumber {
+  display: inline-block;
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-darkest);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.chapterTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--ifm-heading-color);
+}
+
+.chapterDescription {
+  color: var(--ifm-font-color-base);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}

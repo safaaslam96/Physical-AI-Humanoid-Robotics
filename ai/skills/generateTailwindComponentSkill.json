@@ -1,0 +1,86 @@
+{
+  "name": "generateTailwindComponentSkill",
+  "description": "Generates reusable Tailwind CSS components",
+  "purpose": "Creates reusable UI components with Tailwind CSS styling following the specified color scheme and design system",
+  "inputs": {
+    "component_type": {
+      "type": "string",
+      "enum": ["button", "card", "navbar", "footer", "grid", "form", "modal", "highlighter"],
+      "description": "Type of component to generate",
+      "required": true
+    },
+    "props": {
+      "type": "object",
+      "description": "Component-specific properties",
+      "default": {}
+    },
+    "theme": {
+      "type": "object",
+      "description": "Theme configuration with colors",
+      "properties": {
+        "primary_dark": {
+          "type": "string",
+          "default": "#800000"
+        },
+        "primary_light": {
+          "type": "string",
+          "default": "#FFD6D6"
+        },
+        "dark_mode": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "responsive": {
+      "type": "boolean",
+      "description": "Whether to include responsive design",
+      "default": true
+    }
+  },
+  "outputs": {
+    "component_code": {
+      "type": "string",
+      "description": "Generated component code"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Required dependencies"
+    },
+    "success": {
+      "type": "boolean",
+      "description": "Whether generation was successful"
+    }
+  },
+  "implementation": {
+    "type": "function",
+    "handler": "generateTailwindComponentHandler",
+    "dependencies": [
+      "tailwindcss",
+      "clsx",
+      "react"
+    ]
+  },
+  "capabilities": [
+    "Theme-aware styling",
+    "Responsive design",
+    "Reusable components",
+    "Accessibility features",
+    "Modern UI patterns"
+  ],
+  "configuration": {
+    "color_scheme": {
+      "dark": "#800000",
+      "light": "#FFD6D6"
+    },
+    "breakpoints": {
+      "sm": "640px",
+      "md": "768px",
+      "lg": "1024px",
+      "xl": "1280px"
+    }
+  }
+}

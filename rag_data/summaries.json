@@ -1,0 +1,32 @@
+{
+  "summaries": [
+    {
+      "id": "part1_chapter1",
+      "title": "Introduction to Physical AI",
+      "content": "Physical AI refers to artificial intelligence systems that interact with and operate in the physical world, as opposed to purely digital environments. These systems must handle real-world complexities like uncertainty, noise, and dynamic environments. Key components include sensors for perception, actuators for interaction, control systems for coordination, and AI algorithms for decision making.",
+      "key_terms": ["Physical AI", "Embodied Intelligence", "Sensors", "Actuators", "Control Systems"],
+      "chapter_url": "/docs/part1/chapter1"
+    },
+    {
+      "id": "part2_chapter3",
+      "title": "ROS 2 Architecture",
+      "content": "ROS 2 (Robot Operating System 2) provides a flexible framework for writing robot software. It includes a collection of tools, libraries, and conventions that aim to simplify the task of creating complex and robust robot behavior. Key concepts include nodes, topics, services, actions, and parameters.",
+      "key_terms": ["ROS 2", "Nodes", "Topics", "Services", "Actions", "Parameters"],
+      "chapter_url": "/docs/part2/chapter3"
+    },
+    {
+      "id": "part3_chapter6",
+      "title": "Gazebo Simulation",
+      "content": "Gazebo is a robotics simulator that provides realistic 3D environments for robot simulation. It includes accurate physics simulation, high-quality graphics, and convenient programmatic interfaces. Gazebo integrates with ROS and supports various robot models and sensors.",
+      "key_terms": ["Gazebo", "Simulation", "Physics", "Robot Models", "Sensors"],
+      "chapter_url": "/docs/part3/chapter6"
+    },
+    {
+      "id": "part4_chapter9",
+      "title": "NVIDIA Isaac SDK",
+      "content": "The NVIDIA Isaac SDK provides a collection of APIs, libraries, drivers, and sample applications for developing robotics applications. It includes tools for perception, planning, control, and simulation. The SDK leverages NVIDIA's GPU computing capabilities for accelerated AI and computer vision.",
+      "key_terms": ["NVIDIA Isaac SDK", "Perception", "Planning", "Control", "Computer Vision", "GPU Computing"],
+      "chapter_url": "/docs/part4/chapter9"
+    }
+  ]
+}

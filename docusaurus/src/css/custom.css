@@ -1,0 +1,501 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* Modern color scheme for Physical AI and Humanoid Robotics with maroon theme */
+:root {
+  --ifm-color-primary: #800000; /* Maroon */
+  --ifm-color-primary-dark: #660000;
+  --ifm-color-primary-darker: #4d0000;
+  --ifm-color-primary-darkest: #330000;
+  --ifm-color-primary-light: #993333;
+  --ifm-color-primary-lighter: #b34c4c;
+  --ifm-color-primary-lightest: #cc6666;
+  --ifm-color-secondary: #0A1F44; /* Dark blue */
+  --ifm-color-secondary-light: #1B3B6F;
+  --ifm-color-accent: #FFD6D6; /* Light complementary color */
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(128, 0, 0, 0.2);
+  --ifm-navbar-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --ifm-footer-background-color: var(--ifm-color-secondary);
+  --ifm-card-background-color: #ffffff;
+  --ifm-card-border-radius: 12px;
+  --ifm-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #FFD6D6; /* Light complementary color */
+  --ifm-color-primary-dark: #e6c0c0;
+  --ifm-color-primary-darker: #d9b3b3;
+  --ifm-color-primary-darkest: #b38f8f;
+  --ifm-color-primary-light: #ffe6e6;
+  --ifm-color-primary-lighter: #fff0f0;
+  --ifm-color-primary-lightest: #ffffff;
+  --ifm-color-secondary: #1B3B6F;
+  --ifm-color-secondary-light: #0A1F44;
+  --ifm-color-accent: #800000; /* Maroon */
+  --docusaurus-highlighted-code-line-bg: rgba(255, 214, 214, 0.3);
+  --ifm-card-background-color: #1e293b;
+  --ifm-navbar-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Modern button styles */
+.button {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.button--primary {
+  background-color: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+}
+
+.button--primary:hover {
+  background-color: var(--ifm-color-primary-darker);
+  border-color: var(--ifm-color-primary-darker);
+}
+
+/* Chatbot toggle button */
+.chatbot-toggle-button {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-accent) 100%);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chatbot-toggle-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+  background: linear-gradient(135deg, var(--ifm-color-primary-darker) 0%, var(--ifm-color-accent) 100%);
+}
+
+.chatbot-toggle-button:active {
+  transform: translateY(0);
+}
+
+/* Improved navbar styling */
+.navbar {
+  padding: 8px 0;
+}
+
+.navbar__inner {
+  align-items: center;
+}
+
+.navbar__items--right {
+  gap: 0.5rem;
+}
+
+.navbar__item {
+  margin: 0 0.25rem;
+}
+
+/* Translation dropdown styling */
+.dropdown--hoverable .dropdown__menu,
+.dropdown--right .dropdown__menu {
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem 0;
+  min-width: 120px;
+  background-color: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.dropdown__link {
+  border-radius: 6px;
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.dropdown__link:hover {
+  background-color: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-darkest);
+}
+
+/* Account dropdown styling */
+.navbar__items--right .dropdown .navbar__link {
+  font-weight: 500;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 996px) {
+  .navbar-sidebar__item {
+    padding: 0.5rem;
+  }
+
+  .chatbot-toggle-button {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+  }
+}
+
+/* Modern card styles */
+.card {
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: var(--ifm-card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Modern navbar with solid background */
+.navbar {
+  box-shadow: var(--ifm-navbar-shadow);
+  backdrop-filter: none;
+  background-color: #ffffff;
+}
+
+[data-theme='dark'] .navbar {
+  background-color: #0A1F44;
+}
+
+/* Modern hero section for book landing page */
+.hero {
+  background: linear-gradient(135deg, var(--ifm-color-secondary) 0%, #1B3B6F 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 4rem 0;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 20%);
+  pointer-events: none;
+}
+
+.hero__title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  background: linear-gradient(45deg, #ffffff, var(--ifm-color-primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.hero__subtitle {
+  color: #E0F2FE;
+  font-size: 1.25rem;
+  opacity: 0.9;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Book cover display section */
+.book-cover-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  padding: 4rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.book-cover-image {
+  flex: 1;
+  max-width: 400px;
+}
+
+.book-cover-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.book-cover-image img:hover {
+  transform: translateY(-10px);
+}
+
+.book-info {
+  flex: 1;
+  text-align: left;
+}
+
+.book-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--ifm-heading-color);
+}
+
+.book-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  color: var(--ifm-font-color-base);
+}
+
+/* CTA buttons for book */
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.cta-button {
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.cta-button--primary {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-accent) 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.cta-button--primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+  background: linear-gradient(135deg, var(--ifm-color-primary-darker) 0%, var(--ifm-color-accent) 100%);
+}
+
+.cta-button--secondary {
+  background: transparent;
+  color: var(--ifm-color-primary);
+  border: 2px solid var(--ifm-color-primary);
+}
+
+.cta-button--secondary:hover {
+  background: rgba(139, 92, 246, 0.1);
+  transform: translateY(-3px);
+}
+
+/* Modules section styling */
+.modules-section {
+  padding: 4rem 2rem;
+  background: var(--ifm-background-color);
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.module-card {
+  background: var(--ifm-card-background-color);
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: var(--ifm-card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 2rem;
+  text-align: center;
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.module-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.module-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--ifm-color-primary);
+}
+
+.module-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--ifm-heading-color);
+}
+
+.module-description {
+  color: var(--ifm-font-color-base);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+/* Book chapters section */
+.book-chapters-section {
+  padding: 4rem 2rem;
+  background: var(--ifm-background-color);
+}
+
+.chapters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.chapter-card {
+  background: var(--ifm-card-background-color);
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: var(--ifm-card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 1.5rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.chapter-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.chapter-number {
+  display: inline-block;
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-darkest);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.chapter-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--ifm-heading-color);
+}
+
+.chapter-description {
+  color: var(--ifm-font-color-base);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Improved sidebar for book navigation */
+.sidebar {
+  background: var(--ifm-background-surface-color);
+  border-right: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.sidebar-item {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin: 0.25rem 0;
+  transition: all 0.2s ease;
+}
+
+.sidebar-item:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.sidebar-item--active {
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-darkest);
+  font-weight: 600;
+}
+
+/* Improved footer styling */
+.footer {
+  background: var(--ifm-color-secondary) !important;
+  color: white;
+  padding: 4rem 2rem 2rem;
+}
+
+.footer__title {
+  color: white;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.footer__link-item {
+  color: #E0F2FE;
+  opacity: 0.9;
+}
+
+.footer__link-item:hover {
+  color: white;
+  opacity: 1;
+}
+
+.footer--dark {
+  --ifm-footer-background-color: var(--ifm-color-secondary);
+}
+
+/* Solid background for navbar */
+.navbar--dark,
+.navbar--primary {
+  background-color: var(--ifm-color-secondary);
+  backdrop-filter: none;
+}
+
+/* Modern typography */
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Animated elements */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Code block styling */
+.prism-code {
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* Footer styling */
+.footer {
+  background-color: var(--ifm-color-secondary);
+  color: white;
+}

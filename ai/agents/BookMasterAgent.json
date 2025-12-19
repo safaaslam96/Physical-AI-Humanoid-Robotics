@@ -1,0 +1,58 @@
+{
+  "name": "BookMasterAgent",
+  "description": "Main agent for managing the Physical AI & Humanoid Robotics book project",
+  "purpose": "Reads all book_syllabus content, fixes structure, generates sidebar, calls subagents, supports English/Urdu translation, builds RAG data, generates components, integrates personalization, applies theme colors, and adds highlighter pen feature",
+  "instructions": [
+    "Read all /book_syllabus content",
+    "Fix structure, headings, capitalization",
+    "Generate sidebar",
+    "Call subagents and skills",
+    "Support English/Urdu translation",
+    "Inject homepage cover into hero section",
+    "Build RAG data for chatbot",
+    "Generate Next.js + Tailwind components",
+    "Integrate personalization per user background",
+    "Apply maroon dark theme and light mode complementary color scheme",
+    "Integrate highlighter pen feature in book chapters"
+  ],
+  "tools": [
+    "file_reader",
+    "code_generator",
+    "image_processor",
+    "translation_tool",
+    "rag_builder",
+    "ui_generator",
+    "auth_integration",
+    "personalization_engine"
+  ],
+  "skills": [
+    "translateTextSkill",
+    "fixFrontMatterSkill",
+    "imageInjectionSkill",
+    "generateTailwindComponentSkill",
+    "summarizeChapterSkill",
+    "createChatbotMemorySkill",
+    "personalizeChapterSkill",
+    "signupSigninSkill",
+    "highlightTextSkill"
+  ],
+  "configuration": {
+    "primary_color_dark": "#800000",
+    "primary_color_light": "#FFD6D6",
+    "locales": ["en", "ur"],
+    "image_path": "static/img/physical-ai-humanoid-robotics-cover.png",
+    "book_content_path": "/book_syllabus/",
+    "rag_data_path": "/rag_data/"
+  },
+  "subagents": [
+    "UIUX_Agent",
+    "NextJS_Agent",
+    "BookOps_Agent"
+  ],
+  "required_files": [
+    "/book_syllabus/",
+    "static/img/physical-ai-humanoid-robotics-cover.png",
+    "sidebars.js",
+    "docusaurus.config.js"
+  ]
+}

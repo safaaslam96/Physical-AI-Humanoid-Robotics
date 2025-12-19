@@ -1,0 +1,62 @@
+{
+  "name": "translateTextSkill",
+  "description": "Translates text between English and Urdu with Markdown safety and RTL support",
+  "purpose": "Convert text content between English and Urdu while preserving Markdown formatting and supporting RTL layout for Urdu",
+  "inputs": {
+    "text": {
+      "type": "string",
+      "description": "Text to translate",
+      "required": true
+    },
+    "source_language": {
+      "type": "string",
+      "enum": ["en", "ur"],
+      "description": "Source language code",
+      "default": "en"
+    },
+    "target_language": {
+      "type": "string",
+      "enum": ["en", "ur"],
+      "description": "Target language code",
+      "default": "ur"
+    },
+    "preserve_markdown": {
+      "type": "boolean",
+      "description": "Whether to preserve Markdown formatting",
+      "default": true
+    }
+  },
+  "outputs": {
+    "translated_text": {
+      "type": "string",
+      "description": "Translated text with preserved formatting"
+    },
+    "rtl_support": {
+      "type": "boolean",
+      "description": "Whether RTL support is needed for the output"
+    }
+  },
+  "implementation": {
+    "type": "function",
+    "handler": "translateTextHandler",
+    "dependencies": [
+      "google-translate-api",
+      "markdown-parser"
+    ]
+  },
+  "capabilities": [
+    "Markdown-safe translation",
+    "RTL layout support",
+    "Code block preservation",
+    "Frontmatter handling",
+    "Technical terminology accuracy"
+  ],
+  "configuration": {
+    "supported_pairs": [
+      ["en", "ur"],
+      ["ur", "en"]
+    ],
+    "preserve_formatting": true,
+    "technical_dictionary": true
+  }
+}
