@@ -15,16 +15,16 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://your-github-username.github.io',
+  url: 'https://physical-ai-humanoid-robotics-wine.vercel.app',
   // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
+  // For Vercel deployment, baseUrl should be '/'
   baseUrl: '/',
   trailingSlash: false,
 
   // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'your-github-username', // Usually your GitHub org/user name.
-  projectName: 'Physical-AI-Humanoid-Robotics', // Usually your repo name.
+  // Not using GitHub pages - deploying to Vercel
+  organizationName: 'safaaslam96', // GitHub username
+  projectName: 'Physical-AI-Humanoid-Robotics', // Repo name
 
   onBrokenLinks: 'throw',
 
