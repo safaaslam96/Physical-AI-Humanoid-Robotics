@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "buildCommand": "cd docusaurus && npm ci && npm run build",
+  "outputDirectory": "docusaurus/build",
+  "installCommand": "npm install --prefix ./docusaurus",
+  "devCommand": "cd docusaurus && npm start",
+  "cleanUrls": true,
+  "trailingSlash": false
+}
