@@ -90,8 +90,13 @@ const AIChatPopup: React.FC = () => {
     setIsLoading(true);
 
     try {
+      // Get backend URL from environment or use default
+      const backendUrl = typeof window !== 'undefined' && (window as any).BACKEND_URL
+        ? (window as any).BACKEND_URL
+        : process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+
       // Call the RAG backend API at /api/chat
-      const response = await fetch('http://localhost:8000/api/chat', {
+      const response = await fetch(`${backendUrl}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
