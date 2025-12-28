@@ -14,11 +14,11 @@ const config: Config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
-  // Set the production url of your site here
+  // Production URL for Vercel deployment
   url: 'https://physical-ai-humanoid-robotics-wine.vercel.app',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For Vercel deployment, baseUrl should be '/'
+  // Base URL path - must be '/' for Vercel root deployment
   baseUrl: '/',
+  // Disable trailing slashes for cleaner URLs
   trailingSlash: false,
 
   // GitHub pages deployment config.
