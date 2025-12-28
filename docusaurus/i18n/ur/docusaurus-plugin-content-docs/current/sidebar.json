@@ -1,0 +1,289 @@
+{
+  "tutorialSidebar": [
+    {
+      "type": "doc",
+      "id": "intro"
+    },
+    {
+      "type": "category",
+      "label": "ماڈیول 1: روبوٹک نروس سسٹم (ROS 2)",
+      "items": [
+        {
+          "type": "category",
+          "label": "باب 1: فزیکل ای اور امبدڈ انٹیلی جنس کی بنیاد",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part1/chapter1"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 2: ڈیجیٹل ای سے روبوٹس تک جسمانی قوانین کو سمجھنا",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part1/chapter2"
+            }
+          ],
+          "collapsed": false
+        }
+      ],
+      "collapsed": false
+    },
+    {
+      "type": "category",
+      "label": "ماڈیول 2: ڈیجیٹل ٹوئن (Gazebo & Unity)",
+      "items": [
+        {
+          "type": "category",
+          "label": "باب 3: انسان نما روبوٹکس لینڈ سکیپ کا جائزہ",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part2/chapter3"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 4: سینسر سسٹم (LIDAR، کیمرے، IMUs، فورس/ٹورک سینسرز)",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part2/chapter4"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 5: ROS 2 آرکیٹیکچر اور کور تصورات",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part2/chapter5"
+            }
+          ],
+          "collapsed": false
+        }
+      ],
+      "collapsed": false
+    },
+    {
+      "type": "category",
+      "label": "ماڈیول 3: AI-روبٹ براہین (NVIDIA Isaac™)",
+      "items": [
+        {
+          "type": "category",
+          "label": "باب 6: نوڈز، ٹاپکس، سروسز، اور ایکشنز",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part3/chapter6"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 7: Python کے ساتھ ROS 2 پیکجز بنانا",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part3/chapter7"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 8: لانچ فائلز اور پیرامیٹر مینجمنٹ",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part3/chapter8"
+            }
+          ],
+          "collapsed": false
+        }
+      ],
+      "collapsed": false
+    },
+    {
+      "type": "category",
+      "label": "ماڈیول 4: وژن-لینگویج-ایکشن (VLA)",
+      "items": [
+        {
+          "type": "category",
+          "label": "باب 9: ہیومنوائڈز کے لیے URDF کو سمجھنا",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part4/chapter9"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 10: Gazebo سیمولیشن ماحول سیٹ اپ",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part4/chapter10"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 11: فزکس سیمولیشن کے اصول",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part4/chapter11"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 12: URDF اور SDF روبوٹ کی تفصیل کے فارمیٹ",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part4/chapter12"
+            }
+          ],
+          "collapsed": false
+        }
+      ],
+      "collapsed": false
+    },
+    {
+      "type": "category",
+      "label": "ماڈیول 5: ایڈوانسڈ روبوٹکس",
+      "items": [
+        {
+          "type": "category",
+          "label": "باب 13: فزکس سیمولیشن اور سینسر سیمولیشن",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part5/chapter13"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 14: روبوٹ وژولائزیشن کے لیے Unity کا تعارف",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part5/chapter14"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 15: NVIDIA Isaac SDK اور Isaac Sim",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part5/chapter15"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 16: AI-پاورڈ پریسیپشن اور مینیپولیشن",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part5/chapter16"
+            }
+          ],
+          "collapsed": false
+        }
+      ],
+      "collapsed": false
+    },
+    {
+      "type": "category",
+      "label": "ماڈیول 6: ہیومنوائڈ ڈویلپمنٹ",
+      "items": [
+        {
+          "type": "category",
+          "label": "باب 17: Isaac ROS اور وژول SLAM",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part6/chapter17"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 18: ایڈوانسڈ پریسیپشن تکنیکس",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part6/chapter18"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 19: بائی پیڈل ہیومنوائڈ موومنٹ کے لیے پاتھ پلاننگ",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part6/chapter19"
+            }
+          ],
+          "collapsed": false
+        },
+        {
+          "type": "category",
+          "label": "باب 20: سیم ٹو ریل ٹرانسفر تکنیکس",
+          "items": [
+            {
+              "type": "doc",
+              "id": "part6/chapter20"
+            }
+          ],
+          "collapsed": false
+        }
+      ],
+      "collapsed": false
+    },
+    {
+      "type": "category",
+      "label": "ضمیمہ",
+      "items": [
+        {
+          "type": "doc",
+          "id": "appendices/appendix_a"
+        },
+        {
+          "type": "doc",
+          "id": "appendices/appendix_b"
+        },
+        {
+          "type": "doc",
+          "id": "appendices/appendix_c"
+        }
+      ],
+      "collapsed": false
+    }
+  ]
+}

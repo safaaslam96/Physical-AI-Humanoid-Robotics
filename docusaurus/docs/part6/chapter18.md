@@ -3,6 +3,8 @@ title: "Chapter 18: Speech Recognition and Natural Language Understanding for Hu
 sidebar_label: "Chapter 18: Speech Recognition and NLU"
 ---
 
+
+
 # Chapter 18: Speech Recognition and Natural Language Understanding for Humanoid Robots
 
 ## Learning Objectives
@@ -1224,3 +1226,4 @@ This chapter covered the implementation of speech recognition and Natural Langua
 ## Next Steps
 
 In Chapter 19, we'll examine Cognitive Planning with LLMs, exploring how Large Language Models can be used for high-level reasoning and planning in humanoid robotic systems, enabling more sophisticated autonomous behaviors.
+

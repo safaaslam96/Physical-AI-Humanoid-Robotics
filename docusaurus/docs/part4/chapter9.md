@@ -3,41 +3,6 @@ title: "Chapter 9: NVIDIA Isaac SDK and Isaac Sim"
 sidebar_label: "Chapter 9: NVIDIA Isaac SDK"
 ---
 
-# Chapter 9: NVIDIA Isaac SDK and Isaac Sim
-
-## Learning Objectives
-- Understand the NVIDIA Isaac platform ecosystem and its components
-- Set up and configure Isaac Sim for photorealistic simulation
-- Implement synthetic data generation pipelines for robotics
-- Integrate AI-powered perception and manipulation systems using Isaac tools
-
-## Introduction
-
-The NVIDIA Isaac platform represents a comprehensive ecosystem for developing, simulating, and deploying AI-powered robotic systems. At its core, Isaac Sim provides photorealistic simulation capabilities that bridge the reality gap between simulation and real-world deployment. This chapter introduces the Isaac platform, focusing on Isaac Sim for advanced robotics simulation and synthetic data generation, essential for training AI systems in humanoid robotics applications.
-
-## Understanding the NVIDIA Isaac Ecosystem
-
-### Overview of Isaac Platform Components
-
-The NVIDIA Isaac platform consists of several interconnected components:
-
-1. **Isaac Sim**: Photorealistic simulation environment built on NVIDIA Omniverse
-2. **Isaac ROS**: Hardware-accelerated perception and navigation packages
-3. **Isaac Apps**: Pre-built applications for common robotics tasks
-4. **Isaac Gym**: GPU-accelerated reinforcement learning environment
-5. **DeepGraph**: AI-powered mapping and planning tools
-
-### Isaac Sim Architecture
-
-Isaac Sim leverages NVIDIA's Omniverse platform, providing:
-- **USD (Universal Scene Description)**: Scene representation format
-- **PhysX**: NVIDIA's physics simulation engine
-- **RTX Rendering**: Real-time ray tracing for photorealistic visuals
-- **Omniverse Connectors**: Integration with other tools and platforms
-
-### Comparison with Other Simulation Platforms
-
-| Feature | Isaac Sim | Gazebo | Unity |
 |---------|-----------|--------|-------|
 | Visual Quality | Photorealistic (RTX) | Good | Excellent |
 | Physics | PhysX (NVIDIA) | Multiple engines | Built-in physics |
@@ -530,3 +495,4 @@ This chapter introduced the NVIDIA Isaac platform, focusing on Isaac Sim for pho
 ## Next Steps
 
 In Chapter 10, we'll explore Isaac ROS and hardware-accelerated perception, diving deeper into the integration between Isaac tools and ROS 2 for advanced robotics applications.
+

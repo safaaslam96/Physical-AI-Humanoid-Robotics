@@ -3,6 +3,8 @@ title: "Chapter 19: Cognitive Planning with LLMs"
 sidebar_label: "Chapter 19: Cognitive Planning with LLMs"
 ---
 
+
+
 # Chapter 19: Cognitive Planning with LLMs
 
 ## Learning Objectives
@@ -1669,3 +1671,4 @@ This chapter explored the integration of Large Language Models into cognitive pl
 ## Next Steps
 
 In Chapter 20, we'll examine the Autonomous Humanoid Capstone Project, bringing together all the concepts from previous chapters to design and implement a complete autonomous humanoid robot system capable of complex task execution and human interaction.
+

@@ -3,6 +3,8 @@ title: "Chapter 15: Manipulation and Grasping"
 sidebar_label: "Chapter 15: Manipulation & Grasping"
 ---
 
+
+
 # Chapter 15: Manipulation and Grasping
 
 ## Learning Objectives
@@ -720,3 +722,4 @@ This chapter covered the fundamental concepts of humanoid manipulation and grasp
 ## Next Steps
 
 In Chapter 16, we'll explore Natural Human-Robot Interaction, examining how humanoid robots can communicate effectively with humans through speech, gestures, and social behaviors.
+

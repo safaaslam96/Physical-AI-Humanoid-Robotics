@@ -153,7 +153,7 @@ const Highlighter: React.FC<HighlighterProps> = ({ children }) => {
       {/* Render existing highlights */}
       {highlights.map((highlight) => (
         <div
-          key={highlight.id}
+          key={highlight.id || `highlight-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`}
           style={{
             backgroundColor: highlight.color,
             padding: '2px 4px',

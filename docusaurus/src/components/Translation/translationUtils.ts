@@ -22,7 +22,7 @@ export const translatePageContent = async (targetLanguage: string): Promise<void
     }
 
     // Call the backend translation API
-    const response = await fetch('/api/v1/translate', {
+    const response = await fetch('http://localhost:8001/api/v1/translate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -74,63 +74,100 @@ export const getCurrentPageContent = (): string => {
  * Update the page with translated content
  */
 export const updatePageContent = (translatedContent: string, targetLanguage: string): void => {
-  // For a complete implementation, this would involve:
-  // 1. Replacing text content with translations
-  // 2. Handling RTL languages like Urdu
-  // 3. Preserving code blocks and structure
+  // For document pages, we need to replace the main content area
+  const mainContent = document.querySelector('main div[class*="container"], main article, .markdown');
+  if (mainContent) {
+    // Store original content in a data attribute to allow toggling back
+    if (!mainContent.hasAttribute('data-original-content')) {
+      mainContent.setAttribute('data-original-content', mainContent.innerHTML);
+    }
 
-  // Simple implementation: add a translation overlay
-  const existingOverlay = document.getElementById('translation-overlay');
-  if (existingOverlay) {
-    existingOverlay.remove();
-  }
+    // Create a temporary element to process the translated content
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = translatedContent;
 
-  // Create a modal/overlay for the translated content
-  const overlay = document.createElement('div');
-  overlay.id = 'translation-overlay';
-  overlay.innerHTML = `
-    <div style="
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      z-index: 10000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    ">
+    // Apply language-specific styling
+    if (targetLanguage === 'ur') {
+      mainContent.style.direction = 'rtl';
+      mainContent.style.textAlign = 'right';
+    } else {
+      mainContent.style.direction = 'ltr';
+      mainContent.style.textAlign = 'left';
+    }
+
+    // Update the content
+    mainContent.innerHTML = tempDiv.innerHTML;
+  } else {
+    // If no main content found, fall back to the overlay method
+    const existingOverlay = document.getElementById('translation-overlay');
+    if (existingOverlay) {
+      existingOverlay.remove();
+    }
+
+    // Create a modal/overlay for the translated content
+    const overlay = document.createElement('div');
+    overlay.id = 'translation-overlay';
+    overlay.innerHTML = `
       <div style="
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        max-width: 90%;
-        max-height: 90%;
-        overflow-y: auto;
-        direction: ${targetLanguage === 'ur' ? 'rtl' : 'ltr'};
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 10000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       ">
-        <h3 style="margin-top: 0;">Translated Content (${targetLanguage.toUpperCase()})</h3>
-        <div id="translated-content">${translatedContent}</div>
-        <button id="close-translation" style="
-          margin-top: 10px;
-          padding: 8px 16px;
-          background: #8B5CF6;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-        ">Close</button>
+        <div style="
+          background: white;
+          padding: 20px;
+          border-radius: 8px;
+          max-width: 90%;
+          max-height: 90%;
+          overflow-y: auto;
+          direction: ${targetLanguage === 'ur' ? 'rtl' : 'ltr'};
+          text-align: ${targetLanguage === 'ur' ? 'right' : 'left'};
+        ">
+          <h3 style="margin-top: 0;">Translated Content (${targetLanguage.toUpperCase()})</h3>
+          <div id="translated-content" style="
+            line-height: 1.6;
+            margin: 15px 0;
+          ">${translatedContent}</div>
+          <button id="close-translation" style="
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #8B5CF6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+          ">Close</button>
+        </div>
       </div>
-    </div>
-  `;
+    `;
 
-  document.body.appendChild(overlay);
+    document.body.appendChild(overlay);
 
-  // Add close functionality
-  document.getElementById('close-translation')?.addEventListener('click', () => {
-    overlay.remove();
-  });
+    // Add close functionality
+    document.getElementById('close-translation')?.addEventListener('click', () => {
+      overlay.remove();
+    });
+  }
+};
+
+/**
+ * Restore the original page content
+ */
+export const restoreOriginalContent = (): void => {
+  const mainContent = document.querySelector('main div[class*="container"], main article, .markdown');
+  if (mainContent && mainContent.hasAttribute('data-original-content')) {
+    mainContent.innerHTML = mainContent.getAttribute('data-original-content') || '';
+    mainContent.removeAttribute('data-original-content');
+    mainContent.style.direction = 'ltr';
+    mainContent.style.textAlign = 'left';
+  }
 };
 
 /**
@@ -138,7 +175,7 @@ export const updatePageContent = (translatedContent: string, targetLanguage: str
  */
 export const translateText = async (text: string, targetLanguage: string): Promise<string> => {
   try {
-    const response = await fetch('/api/v1/translate', {
+    const response = await fetch('http://localhost:8001/api/v1/translate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

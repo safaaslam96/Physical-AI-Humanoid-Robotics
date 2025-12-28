@@ -1,6 +1,7 @@
 import React from 'react';
 import OriginalLayout from '@theme-original/Layout';
-import ChatbotPopup from '../components/Chatbot/ChatbotPopup';
+import AIChatPopup from '../components/AIChatPopup/AIChatPopup';
+import { AuthProvider } from '../contexts/AuthContext';
 
 type Props = {
   children?: React.ReactNode;
@@ -9,10 +10,10 @@ type Props = {
 
 const LayoutWrapper = (props: Props): JSX.Element => {
   return (
-    <>
+    <AuthProvider>
       <OriginalLayout {...props}>{props.children}</OriginalLayout>
-      <ChatbotPopup />
-    </>
+      <AIChatPopup />
+    </AuthProvider>
   );
 };
 

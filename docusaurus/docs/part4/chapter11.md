@@ -3,6 +3,8 @@ title: "Chapter 11: Nav2 and Path Planning"
 sidebar_label: "Chapter 11: Nav2 Path Planning"
 ---
 
+
+
 # Chapter 11: Nav2 and Path Planning
 
 ## Learning Objectives
@@ -805,3 +807,4 @@ This chapter covered Nav2 and path planning for humanoid robots, addressing the 
 ## Next Steps
 
 In Chapter 12, we'll explore sim-to-real transfer techniques, building upon the navigation foundation to enable successful deployment of simulation-trained systems in real-world environments.
+

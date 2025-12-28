@@ -15,15 +15,16 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://your-github-username.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
+  trailingSlash: false,
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'your-github-username', // Usually your GitHub org/user name.
+  projectName: 'Physical-AI-Humanoid-Robotics', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
@@ -33,8 +34,19 @@ const config: Config = {
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'ur'],
+    localeConfigs: {
+      ur: {
+        label: 'اردو',
+        direction: 'rtl',
+        htmlLang: 'ur',
+        path: 'ur'
+      }
+    },
   },
 
+  plugins: [
+    './src/plugins/text-highlighter',
+  ],
   presets: [
     [
       'classic',
@@ -68,16 +80,17 @@ const config: Config = {
     ],
   ],
 
-  scripts: [
-    {
-      src: '/js/translation.js',
-      defer: true,
-    },
-  ],
+
+  scripts: [],
 
   stylesheets: [
     {
       href: 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap',
+      type: 'text/css',
+      rel: 'stylesheet',
+    },
+    {
+      href: 'https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap',
       type: 'text/css',
       rel: 'stylesheet',
     },
@@ -87,49 +100,31 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     colorMode: {
-      defaultMode: 'dark', // Changed to dark mode by default
+      defaultMode: 'light', // Changed to light mode by default
       disableSwitch: false,
       respectPrefersColorScheme: true,
     },
+    fonts: {
+      body: ['"Noto Nastaliq Urdu"', 'sans-serif'],
+    },
  navbar: {
   title: 'Physical AI & Humanoid Robotics',
-  logo: {
-    alt: 'Physical AI Logo',
-    src: 'img/logo.svg',      // light mode
-    srcDark: 'img/logo.svg', // dark mode (can be different)
-    width: 32,
-    height: 32,
-  },
   items: [
     {
-      type: 'docSidebar',
-      sidebarId: 'tutorialSidebar',
-      position: 'left',
-      label: 'Book',
-    },
-    {
       type: 'localeDropdown',
-      position: 'left',
-    },
-    {
-      type: 'html',
-      position: 'right',
-      value: '<a href="/auth/signin" class="button button--secondary button--sm">Sign In</a>',
-    },
-    {
-      type: 'html',
-      position: 'right',
-      value: '<a href="/auth/signup" class="button button--primary button--sm">Sign Up</a>',
-    },
-    {
-      href: 'https://github.com/facebook/docusaurus',
-      label: 'GitHub',
       position: 'right',
     },
     {
-      type: 'html',
+      to: '/signin',
+      label: 'Sign In',
       position: 'right',
-      value: '<button id="chatbot-toggle" class="chatbot-toggle-button">🤖 AI Chat</button>',
+      className: 'auth-button signin-button',
+    },
+    {
+      to: '/signup',
+      label: 'Sign Up',
+      position: 'right',
+      className: 'auth-button signup-button',
     },
   ],
 },

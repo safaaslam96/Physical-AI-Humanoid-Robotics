@@ -3,6 +3,8 @@ title: "Appendix A: Hardware Requirements and Setup"
 sidebar_label: "Appendix A: Hardware Requirements"
 ---
 
+
+
 # Appendix A: Hardware Requirements and Setup
 
 ## Overview
@@ -205,3 +207,4 @@ This appendix provides detailed information about the hardware requirements for 
 - **Solution**: Check ROS/ROS2 communication and verify node connections
 
 This hardware guide provides the foundation for building capable humanoid robots that can implement the advanced algorithms and techniques described throughout this book. Proper hardware selection and setup are crucial for achieving the performance and reliability required for autonomous humanoid operation.
+

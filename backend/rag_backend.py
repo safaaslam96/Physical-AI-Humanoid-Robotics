@@ -12,6 +12,14 @@ from typing import List, Dict, Optional
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import google.generativeai as genai
+from google.generativeai import embedding
+from dotenv import load_dotenv
+import asyncio
+from src.api.translation_routes import router as translation_router
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = FastAPI(title="Physical AI & Humanoid Robotics RAG API")
 
@@ -24,18 +32,73 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Configuration
-QDRANT_URL = os.getenv("QDRANT_URL", "https://your-qdrant-cluster.qdrant.io")
-QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "cfb32841-a805-4fbe-99a4-7973b8b69e77|YkjELgVGWydUW8YrbRmVCYYZtPWkN5ukNKNyc8yG91ixiPfU7STaXg")
-NEON_DB_URL = os.getenv("NEON_DB_URL", "sqlite:///./test.db")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "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")
+# Include translation routes
+app.include_router(translation_router, prefix="/api/v1", tags=["translation"])
 
-# Initialize OpenAI client
-openai_client = openai.OpenAI(api_key=OPENAI_API_KEY)
+# Configuration
+QDRANT_URL = os.getenv("QDRANT_URL")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
+NEON_DB_URL = os.getenv("NEON_DB_URL")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+# Initialize OpenAI client (kept for fallback/alternative use)
+if OPENAI_API_KEY:
+    try:
+        openai_client = openai.OpenAI(api_key=OPENAI_API_KEY)
+    except Exception as e:
+        print(f"Warning: Could not initialize OpenAI client: {e}")
+        openai_client = None
+else:
+    print("Warning: OPENAI_API_KEY not found in environment variables")
+    openai_client = None
+
+# Initialize Google Generative AI client
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+else:
+    print("Warning: GEMINI_API_KEY not found in environment variables")
+
+gemini_model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-pro-latest")
+embedding_model_name = os.getenv("GEMINI_EMBEDDING_MODEL", "models/embedding-001")  # Gemini embedding model
 
 # Qdrant client initialization with fallback
 qdrant_client = None
 QDRANT_AVAILABLE = False
+
+# Define helper functions for Gemini embeddings
+def get_gemini_embedding(text: str):
+    """Get embedding from Gemini model"""
+    try:
+        # Check if text is empty or too short
+        if not text or len(text.strip()) == 0:
+            # Return a zero vector or handle empty text appropriately
+            return [0.0] * 768  # Standard embedding size
+
+        result = genai.embed_content(
+            model=embedding_model_name,
+            content=text,
+            task_type="retrieval_document"  # or "retrieval_query" for queries
+        )
+        return result['embedding']
+    except Exception as e:
+        print(f"Gemini embedding failed: {e}")
+        # Fallback to OpenAI if Gemini fails
+        if openai_client is not None:
+            try:
+                response = openai_client.embeddings.create(
+                    input=text,
+                    model="text-embedding-ada-002"
+                )
+                return response.data[0].embedding
+            except Exception as oe:
+                print(f"OpenAI embedding also failed: {oe}")
+                # Return a default embedding as last resort
+                return [0.0] * 1536  # Standard OpenAI embedding size
+        else:
+            print("OpenAI client not available, using default embedding")
+            # Return a default embedding as last resort
+            return [0.0] * 768  # Standard embedding size
 
 # Define wrapper functions first so they're available during initialization
 def create_collection_fallback(collection_name: str, vectors_config):
@@ -173,12 +236,6 @@ class FeedbackRequest(BaseModel):
     user_rating: int  # 1-5 scale
     user_id: Optional[str] = None
 
-class TranslateRequest(BaseModel):
-    text: str
-    source_language: str
-    target_language: str
-    preserve_markdown: Optional[bool] = True
-
 @app.on_event("startup")
 async def startup_event():
     """Initialize database connection and Qdrant collection or in-memory storage"""
@@ -207,52 +264,45 @@ async def startup_event():
         create_collection("book_content", None)
         create_collection("highlights", None)
 
-        # Load sample data for demonstration if available
-        try:
-            with open("../rag_data/summaries.json", "r") as f:
-                sample_data = json.load(f)
+    # Load sample data for demonstration if available (do this regardless of QDRANT availability)
+    try:
+        print("Attempting to load sample data from ../rag_data/summaries.json")
+        with open("../rag_data/summaries.json", "r") as f:
+            sample_data = json.load(f)
 
-            for item in sample_data.get("summaries", []):
-                # Create embedding for the content
-                response = openai_client.embeddings.create(
-                    input=item["content"],
-                    model="text-embedding-ada-002"
-                )
-                content_embedding = response.data[0].embedding
+        for item in sample_data.get("summaries", []):
+            # Create embedding for the content using Gemini
+            content_embedding = get_gemini_embedding(item["content"])
 
-                # Store in in-memory book content storage
-                highlight_id = str(uuid.uuid4())
+            # Store in storage (Qdrant or in-memory)
+            highlight_id = str(uuid.uuid4())
 
-                upsert(
-                    collection_name="book_content",
-                    points=[
-                        models.PointStruct(
-                            id=highlight_id,
-                            vector=content_embedding,
-                            payload={
-                                "content": item["content"],
-                                "chapter_id": item["id"],
-                                "title": item["title"],
-                                "key_terms": ", ".join(item["key_terms"]),
-                                "timestamp": datetime.now().isoformat()
-                            }
-                        )
-                    ]
-                )
-            print(f"Loaded {len(sample_data.get('summaries', []))} sample documents for demonstration")
-        except Exception as e:
-            print(f"Could not load sample data: {e}")
+            upsert(
+                collection_name="book_content",
+                points=[
+                    models.PointStruct(
+                        id=highlight_id,
+                        vector=content_embedding,
+                        payload={
+                            "content": item["content"],
+                            "chapter_id": item["id"],
+                            "title": item["title"],
+                            "key_terms": ", ".join(item["key_terms"]),
+                            "timestamp": datetime.now().isoformat()
+                        }
+                    )
+                ]
+            )
+        print(f"Loaded {len(sample_data.get('summaries', []))} sample documents for demonstration")
+    except Exception as e:
+        print(f"Could not load sample data: {e}")
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
     """Chat endpoint that answers questions based on book content"""
     try:
-        # Generate embedding for the query
-        response = openai_client.embeddings.create(
-            input=request.message,
-            model="text-embedding-ada-002"
-        )
-        query_embedding = response.data[0].embedding
+        # Generate embedding for the query using Gemini
+        query_embedding = get_gemini_embedding(request.message)
 
         # Search based on availability of Qdrant
         if QDRANT_AVAILABLE:
@@ -292,20 +342,32 @@ async def chat_endpoint(request: ChatRequest):
         context_texts = [result.payload.get('content', '') for result in search_results]
         context = "\n\n".join(context_texts)
 
-        # Generate response using OpenAI
-        messages = [
-            {"role": "system", "content": "You are an expert assistant for the Physical AI & Humanoid Robotics book. Answer questions based on the provided context from the book. Be helpful and accurate."},
-            {"role": "user", "content": f"Context: {context}\n\nQuestion: {request.message}"}
-        ]
+        # Generate response using Gemini
+        gemini_model = genai.GenerativeModel(gemini_model_name)
 
-        response = openai_client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            max_tokens=500,
-            temperature=0.7
-        )
+        # Prepare the prompt for Gemini
+        prompt = f"""You are an expert assistant for the Physical AI & Humanoid Robotics book. Answer questions based on the provided context from the book. Be helpful and accurate.
 
-        answer = response.choices[0].message.content
+Context: {context}
+
+Question: {request.message}"""
+
+        try:
+            response = gemini_model.generate_content(
+                prompt,
+                generation_config=genai.types.GenerationConfig(
+                    max_output_tokens=500,
+                    temperature=0.7
+                )
+            )
+            answer = response.text
+        except Exception as e:
+            print(f"Gemini generation failed: {e}")
+            # When Gemini fails, provide a helpful response based on available context
+            if context.strip():
+                answer = f"Based on the book content: {context[:500]}... For your question '{request.message}', please refer to the relevant sections in the book. The AI service is temporarily unavailable."
+            else:
+                answer = f"I understand you're asking about: {request.message}. The AI service is currently unavailable, but please refer to the Physical AI & Humanoid Robotics book for comprehensive information on this topic."
 
         # Prepare sources
         sources = []
@@ -329,181 +391,211 @@ async def chat_endpoint(request: ChatRequest):
 user_highlights_db: Dict[str, List[Dict]] = {}
 chat_feedback_db: List[Dict] = []
 
-# In-memory vector storage for fallback when Qdrant is not available
-if not QDRANT_AVAILABLE:
-    # Storage for book content and highlights
-    book_content_storage = []
-    highlights_storage = []
+# Global in-memory storage for fallback (defined regardless of QDRANT availability)
+# Storage for book content and highlights
+book_content_storage = []
+highlights_storage = []
 
-    # TF-IDF vectorizers for similarity search fallback
-    book_content_vectorizer = TfidfVectorizer()
-    book_content_vectors = None
-    highlights_vectorizer = TfidfVectorizer()
-    highlights_vectors = None
-    user_highlights_vectors = {}  # For each user's highlights
+# TF-IDF vectorizers for similarity search fallback
+book_content_vectorizer = TfidfVectorizer()
+book_content_vectors = None
+highlights_vectorizer = TfidfVectorizer()
+highlights_vectors = None
+user_highlights_vectors = {}  # For each user's highlights
 
-    def upsert_fallback(collection_name: str, points):
-        """Fallback function for upserting vectors"""
-        global book_content_vectors, highlights_vectors
-        for point in points:
-            if collection_name == "book_content":
-                book_content_storage.append({
-                    "id": point.id,
-                    "vector": point.vector,
-                    "payload": point.payload
-                })
-                # Rebuild vectorizer and vectors
-                if book_content_storage:
-                    contents = [item["payload"].get("content", "") for item in book_content_storage]
-                    book_content_vectors = book_content_vectorizer.fit_transform(contents)
-            elif collection_name == "highlights":
-                highlights_storage.append({
-                    "id": point.id,
-                    "vector": point.vector,
-                    "payload": point.payload
-                })
-                # Group by user and rebuild vectors for user highlights
-                user_id = point.payload.get("user_id", "")
-                if user_id not in user_highlights_vectors:
-                    user_highlights_vectors[user_id] = []
-
-                user_highlights_vectors[user_id].append({
-                    "id": point.id,
-                    "vector": point.vector,
-                    "payload": point.payload
-                })
-
-                # Rebuild vectorizer for this user's highlights
-                user_highlights = [item["payload"].get("highlighted_text", "") for item in user_highlights_vectors[user_id]]
-                if user_highlights:
-                    user_highlights_vectors[user_id + "_vectors"] = highlights_vectorizer.fit_transform(user_highlights)
-
-    def search_fallback(collection_name: str, query_vector, query_filter=None, limit=5):
-        """Fallback function for searching vectors"""
-        from types import SimpleNamespace
-
-        results = []
-
+def upsert_fallback(collection_name: str, points):
+    """Fallback function for upserting vectors"""
+    global book_content_vectors, highlights_vectors
+    for point in points:
         if collection_name == "book_content":
-            if book_content_storage and book_content_vectors is not None:
-                # For fallback, we'll use TF-IDF similarity instead of vector similarity
-                # We'll create a simple search based on content matching
-                query_text = f"Query vector converted to text"  # Placeholder
-                # Instead of using the query vector directly, let's just do a simple similarity search
-                # Since we don't have the original text to vectorize in the same way, we'll use a different approach
-                # We'll create a simple keyword-based search for the fallback
-                pass  # We'll implement this in the chat endpoint directly
+            book_content_storage.append({
+                "id": point.id,
+                "vector": point.vector,
+                "payload": point.payload
+            })
+            # Rebuild vectorizer and vectors
+            if book_content_storage:
+                contents = [item["payload"].get("content", "") for item in book_content_storage]
+                book_content_vectors = book_content_vectorizer.fit_transform(contents)
         elif collection_name == "highlights":
-            if query_filter and query_filter.must:
-                # Filter by user_id
-                user_id = query_filter.must[0].match.value
-                user_highlights = [h for h in highlights_storage if h["payload"].get("user_id") == user_id]
+            highlights_storage.append({
+                "id": point.id,
+                "vector": point.vector,
+                "payload": point.payload
+            })
+            # Group by user and rebuild vectors for user highlights
+            user_id = point.payload.get("user_id", "")
+            if user_id not in user_highlights_vectors:
+                user_highlights_vectors[user_id] = []
 
-                # For now, return all user highlights (this is a simplified fallback)
-                for h in user_highlights[:limit]:
-                    result = SimpleNamespace()
-                    result.payload = h["payload"]
-                    result.score = 0.5  # Placeholder score
-                    results.append(result)
-            else:
-                results = [SimpleNamespace(payload=h["payload"], score=0.5) for h in highlights_storage[:limit]]
+            user_highlights_vectors[user_id].append({
+                "id": point.id,
+                "vector": point.vector,
+                "payload": point.payload
+            })
 
-        return results
+            # Rebuild vectorizer for this user's highlights
+            user_highlights = [item["payload"].get("highlighted_text", "") for item in user_highlights_vectors[user_id]]
+            if user_highlights:
+                user_highlights_vectors[user_id + "_vectors"] = highlights_vectorizer.fit_transform(user_highlights)
 
-    def search_in_memory_content(query_text: str, limit=5):
-        """Search in book content using TF-IDF similarity"""
-        from types import SimpleNamespace
+def search_fallback(collection_name: str, query_vector, query_filter=None, limit=5):
+    """Fallback function for searching vectors"""
+    from types import SimpleNamespace
 
-        if not book_content_storage:
-            return []
+    results = []
 
-        # Extract content texts
-        contents = [item["payload"].get("content", "") for item in book_content_storage]
+    if collection_name == "book_content":
+        if book_content_storage and book_content_vectors is not None:
+            # For fallback, we'll use TF-IDF similarity instead of vector similarity
+            # We'll create a simple search based on content matching
+            query_text = f"Query vector converted to text"  # Placeholder
+            # Instead of using the query vector directly, let's just do a simple similarity search
+            # Since we don't have the original text to vectorize in the same way, we'll use a different approach
+            # We'll create a simple keyword-based search for the fallback
+            pass  # We'll implement this in the chat endpoint directly
+    elif collection_name == "highlights":
+        if query_filter and query_filter.must:
+            # Filter by user_id
+            user_id = query_filter.must[0].match.value
+            user_highlights = [h for h in highlights_storage if h["payload"].get("user_id") == user_id]
 
-        if not contents:
-            return []
-
-        # Create TF-IDF vectors for search
-        vectorizer = TfidfVectorizer()
-        content_vectors = vectorizer.fit_transform(contents)
-
-        # Transform the query
-        query_vector = vectorizer.transform([query_text])
-
-        # Calculate cosine similarity
-        similarities = cosine_similarity(query_vector, content_vectors).flatten()
-
-        # Get top results
-        top_indices = similarities.argsort()[-limit:][::-1]
-
-        results = []
-        for idx in top_indices:
-            if similarities[idx] > 0:  # Only return results with some similarity
+            # For now, return all user highlights (this is a simplified fallback)
+            for h in user_highlights[:limit]:
                 result = SimpleNamespace()
-                result.payload = book_content_storage[idx]["payload"]
-                result.score = float(similarities[idx])
+                result.payload = h["payload"]
+                result.score = 0.5  # Placeholder score
                 results.append(result)
+        else:
+            results = [SimpleNamespace(payload=h["payload"], score=0.5) for h in highlights_storage[:limit]]
 
-        return results
+    return results
 
-    def search_in_memory_highlights(query_text: str, user_id: str, limit=5):
-        """Search in user's highlights using TF-IDF similarity"""
-        from types import SimpleNamespace
+def search_in_memory_content(query_text: str, limit=5):
+    """Search in book content using TF-IDF similarity"""
+    from types import SimpleNamespace
 
-        # Get user's highlights
-        user_highlights = [h for h in highlights_storage if h["payload"].get("user_id") == user_id]
+    if not book_content_storage:
+        return []
 
-        if not user_highlights:
-            return []
+    # Extract content texts
+    contents = [item["payload"].get("content", "") for item in book_content_storage]
 
-        # Extract highlighted texts
-        contents = [item["payload"].get("highlighted_text", "") for item in user_highlights]
+    if not contents:
+        return []
 
-        if not contents:
-            return []
+    # Create TF-IDF vectors for search
+    vectorizer = TfidfVectorizer()
+    content_vectors = vectorizer.fit_transform(contents)
 
-        # Create TF-IDF vectors for search
-        vectorizer = TfidfVectorizer()
-        content_vectors = vectorizer.fit_transform(contents)
+    # Transform the query
+    query_vector = vectorizer.transform([query_text])
 
-        # Transform the query
-        query_vector = vectorizer.transform([query_text])
+    # Calculate cosine similarity
+    similarities = cosine_similarity(query_vector, content_vectors).flatten()
 
-        # Calculate cosine similarity
-        similarities = cosine_similarity(query_vector, content_vectors).flatten()
+    # Get top results
+    top_indices = similarities.argsort()[-limit:][::-1]
 
-        # Get top results
-        top_indices = similarities.argsort()[-limit:][::-1]
+    results = []
+    for idx in top_indices:
+        if similarities[idx] > 0:  # Only return results with some similarity
+            result = SimpleNamespace()
+            result.payload = book_content_storage[idx]["payload"]
+            result.score = float(similarities[idx])
+            results.append(result)
 
-        results = []
-        for idx in top_indices:
-            if similarities[idx] > 0:  # Only return results with some similarity
-                result = SimpleNamespace()
-                result.payload = user_highlights[idx]["payload"]
-                result.score = float(similarities[idx])
-                results.append(result)
+    return results
 
-        return results
+def search_in_memory_highlights(query_text: str, user_id: str, limit=5):
+    """Search in user's highlights using TF-IDF similarity"""
+    from types import SimpleNamespace
+
+    # Get user's highlights
+    user_highlights = [h for h in highlights_storage if h["payload"].get("user_id") == user_id]
+
+    if not user_highlights:
+        return []
+
+    # Extract highlighted texts
+    contents = [item["payload"].get("highlighted_text", "") for item in user_highlights]
+
+    if not contents:
+        return []
+
+    # Create TF-IDF vectors for search
+    vectorizer = TfidfVectorizer()
+    content_vectors = vectorizer.fit_transform(contents)
+
+    # Transform the query
+    query_vector = vectorizer.transform([query_text])
+
+    # Calculate cosine similarity
+    similarities = cosine_similarity(query_vector, content_vectors).flatten()
+
+    # Get top results
+    top_indices = similarities.argsort()[-limit:][::-1]
+
+    results = []
+    for idx in top_indices:
+        if similarities[idx] > 0:  # Only return results with some similarity
+            result = SimpleNamespace()
+            result.payload = user_highlights[idx]["payload"]
+            result.score = float(similarities[idx])
+            results.append(result)
+
+    return results
+
+# When Qdrant is available, we still have the fallback functions defined globally
+if not QDRANT_AVAILABLE:
+    print("Using in-memory storage - Qdrant not available")
+    # Initialize in-memory collections by calling create_collection_fallback
+    create_collection("book_content", None)
+    create_collection("highlights", None)
+
+    # Load sample data for demonstration if available
+    try:
+        print("Attempting to load sample data from ../rag_data/summaries.json")
+        with open("../rag_data/summaries.json", "r") as f:
+            sample_data = json.load(f)
+        print(f"Successfully loaded sample data with {len(sample_data.get('summaries', []))} summaries")
+
+        for item in sample_data.get("summaries", []):
+            # Create embedding for the content using Gemini
+            content_embedding = get_gemini_embedding(item["content"])
+
+            # Store in in-memory book content storage
+            highlight_id = str(uuid.uuid4())
+
+            upsert(
+                collection_name="book_content",
+                points=[
+                    models.PointStruct(
+                        id=highlight_id,
+                        vector=content_embedding,
+                        payload={
+                            "content": item["content"],
+                            "chapter_id": item["id"],
+                            "title": item["title"],
+                            "key_terms": ", ".join(item["key_terms"]),
+                            "timestamp": datetime.now().isoformat()
+                        }
+                    )
+                ]
+            )
+        print(f"Loaded {len(sample_data.get('summaries', []))} sample documents for demonstration")
+    except Exception as e:
+        print(f"Could not load sample data: {e}")
 else:
-    # When Qdrant is available, define a simple upsert_fallback and search_fallback that shouldn't be called
-    def upsert_fallback(collection_name: str, points):
-        """This function should not be called when Qdrant is available"""
-        raise Exception("upsert_fallback should not be called when Qdrant is available")
-
-    def search_fallback(collection_name: str, query_vector, query_filter=None, limit=5):
-        """This function should not be called when Qdrant is available"""
-        raise Exception("search_fallback should not be called when Qdrant is available")
+    # When Qdrant is available, define the behavior for startup
+    pass
 
 @app.post("/api/select-text")
 async def select_text_endpoint(request: SelectTextRequest):
     """Endpoint to store highlighted text"""
     try:
-        # Generate embedding for the selected text
-        response = openai_client.embeddings.create(
-            input=request.text,
-            model="text-embedding-ada-002"
-        )
-        text_embedding = response.data[0].embedding
+        # Generate embedding for the selected text using Gemini
+        text_embedding = get_gemini_embedding(request.text)
 
         # Store in highlights collection (Qdrant or in-memory)
         highlight_id = str(uuid.uuid4())
@@ -581,40 +673,29 @@ async def get_user_highlights(user_id: str, chapter_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Get highlights error: {str(e)}")
 
-@app.post("/api/translate")
-async def translate_endpoint(request: TranslateRequest):
-    """Translation endpoint using OpenAI"""
+
+@app.post("/api/ingest")
+async def ingest_content():
+    """Ingest book content into the vector store"""
     try:
-        # For now, return the original text as a placeholder
-        # In a real implementation, this would call a translation service
-        # or use OpenAI's API to translate the content
+        from src.services.content_loader import ContentLoader
 
-        # For demonstration purposes, we'll return a translated version
-        # using OpenAI's chat completion
-        messages = [
-            {"role": "system", "content": f"You are a professional translator. Translate the following text from {request.source_language} to {request.target_language}. Preserve markdown formatting if present. If translating to Urdu, use proper RTL formatting."},
-            {"role": "user", "content": request.text}
-        ]
+        # Create content loader instance
+        loader = ContentLoader()
 
-        response = openai_client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            max_tokens=1000,
-            temperature=0.3
-        )
+        # Load the book content into the vector store
+        success = await loader.load_book_content(force_reload=True)
 
-        translated_text = response.choices[0].message.content
-
-        return {
-            "original_text": request.text,
-            "translated_text": translated_text,
-            "source_language": request.source_language,
-            "target_language": request.target_language,
-            "success": True
-        }
-
+        if success:
+            return {
+                "status": "success",
+                "message": "Book content ingested successfully into vector store"
+            }
+        else:
+            raise HTTPException(status_code=500, detail="Failed to ingest content")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Translation error: {str(e)}")
+        print(f"Ingestion error: {e}")
+        raise HTTPException(status_code=500, detail=f"Ingestion failed: {str(e)}")
 
 
 @app.get("/health")

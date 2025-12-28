@@ -17,7 +17,8 @@ class Settings(BaseSettings):
 
     # Google Gemini settings
     gemini_api_key: Optional[str] = None
-    gemini_model: str = "gemini-2.5-pro-flash"
+    gemini_model: str = "models/gemini-2.5-flash"
+    gemini_embedding_model: str = "models/text-embedding-004"
 
     # Content directory settings
     content_directory: str = "./docusaurus/docs"

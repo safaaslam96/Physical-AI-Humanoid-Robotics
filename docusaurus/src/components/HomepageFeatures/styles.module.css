@@ -1,11 +1,34 @@
-/* Book cover section */
+/* Book cover section - Full-width hero section */
 .bookCoverSection {
   padding: 4rem 2rem;
-  background: var(--ifm-color-emphasis-100);
+  background: linear-gradient(135deg, var(--ifm-color-emphasis-100) 0%, #ffffff 100%);
+  position: relative;
+  overflow: hidden;
+  color: #1e293b;
+}
+
+.bookCoverSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(124, 58, 237, 0.05) 0%, transparent 20%);
+  pointer-events: none;
 }
 
 [data-theme='dark'] .bookCoverSection {
-  background: var(--ifm-background-color);
+  background: #0f172a;
+  color: white;
+}
+
+[data-theme='dark'] .bookCoverSection::before {
+  background:
+    radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(124, 58, 237, 0.15) 0%, transparent 20%);
 }
 
 .bookCoverLayout {
@@ -14,6 +37,8 @@
   justify-content: center;
   gap: 4rem;
   padding: 2rem 0;
+  position: relative;
+  z-index: 1;
 }
 
 @media screen and (max-width: 996px) {
@@ -21,6 +46,7 @@
     flex-direction: column;
     gap: 2rem;
     text-align: center;
+    padding: 2rem 1rem;
   }
 
   .bookInfo {
@@ -33,29 +59,53 @@
   max-width: 400px;
 }
 
+.bookCoverImage img {
+  width: 100%;
+  height: auto;
+  max-width: 400px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.bookCoverImage img:hover {
+  transform: translateY(-10px);
+}
+
 .bookInfo {
   flex: 1;
   text-align: left;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .bookTitle {
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-size: 3.5rem;
+  font-weight: 800;
   margin-bottom: 1rem;
-  color: var(--ifm-heading-color);
+  background: linear-gradient(45deg, var(--ifm-color-primary-light), var(--ifm-color-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: left;
 }
 
 .bookDescription {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   line-height: 1.6;
   margin-bottom: 2rem;
-  color: var(--ifm-font-color-base);
+  color: var(--ifm-color-primary-lighter);
+  opacity: 0.9;
+  text-align: left;
 }
 
 .ctaButtons {
   display: flex;
   gap: 1rem;
   justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 @media screen and (max-width: 996px) {
@@ -65,37 +115,40 @@
 }
 
 .primaryButton {
-  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-accent) 100%);
+  background: #8b5cf6;
   color: white;
   border: none;
   padding: 1rem 2rem;
-  border-radius: 8px;
+  border-radius: 12px;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(128, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+  display: inline-block;
 }
 
 .primaryButton:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(128, 0, 0, 0.4);
-  background: linear-gradient(135deg, var(--ifm-color-primary-darker) 0%, var(--ifm-color-accent) 100%);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+  background: #7c3aed;
 }
 
 .secondaryButton {
-  background: transparent;
-  color: var(--ifm-color-primary);
-  border: 2px solid var(--ifm-color-primary);
+  background: #7c3aed;
+  color: white;
+  border: none;
   padding: 1rem 2rem;
-  border-radius: 8px;
+  border-radius: 12px;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
 }
 
 .secondaryButton:hover {
-  background: rgba(128, 0, 0, 0.1);
   transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
+  background: #6d28d9;
 }
 
 /* Modules section */
@@ -215,4 +268,392 @@
   color: var(--ifm-font-color-base);
   font-size: 0.875rem;
   line-height: 1.5;
+}
+
+/* Quarter Overview section */
+.quarterOverviewSection {
+  padding: 4rem 2rem;
+  background: var(--ifm-background-color);
+}
+
+.quarterOverviewContent {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.quarterOverviewContent p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--ifm-font-color-base);
+  margin-bottom: 2rem;
+}
+
+.learningOutcomes {
+  text-align: left;
+  margin-top: 1.5rem;
+}
+
+.learningOutcomes h3 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  color: var(--ifm-heading-color);
+  text-align: center;
+}
+
+.learningOutcomesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.learningOutcomeCard {
+  background: var(--ifm-card-background-color);
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: var(--ifm-card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.learningOutcomeCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(139, 92, 246, 0.3), 0 0 20px rgba(139, 92, 246, 0.2);
+}
+
+.learningOutcomeIcon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--ifm-color-primary);
+}
+
+.learningOutcomeTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  color: var(--ifm-heading-color);
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.learningOutcomeDescription {
+  color: var(--ifm-font-color-base);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.learningOutcomeButton {
+  background-color: var(--ifm-color-primary) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  transition: all 0.3s ease !important;
+  align-self: center;
+  width: auto;
+}
+
+.learningOutcomeButton:hover {
+  background-color: var(--ifm-color-primary-dark) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4) !important;
+}
+
+@media screen and (max-width: 768px) {
+  .learningOutcomesGrid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .learningOutcomesGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Modules Carousel section */
+.modulesCarousel {
+  padding: 2rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.modulesCarousel .swiper {
+  padding: 2rem 0;
+}
+
+.modulesCarousel .swiper-slide {
+  height: auto;
+}
+
+.modulesGroup {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  justify-content: center;
+}
+
+@media screen and (max-width: 768px) {
+  .modulesGroup {
+    flex-direction: column;
+  }
+}
+
+.moduleCard {
+  background: var(--ifm-card-background-color);
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: var(--ifm-card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 2rem;
+  text-align: center;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  height: 100%;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Allow cards to grow equally */
+}
+
+.moduleCard:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(139, 92, 246, 0.3), 0 0 20px rgba(139, 92, 246, 0.2);
+}
+
+/* Ensure equal height for cards in group */
+.modulesGroup > div {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.modulesGroup > div > * {
+  flex: 1;
+}
+
+.moduleIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--ifm-color-primary);
+}
+
+.moduleTitle {
+  font-size: 1.5rem;
+  font-weight: 700; /* Bold title */
+  margin-bottom: 1rem;
+  color: var(--ifm-heading-color);
+}
+
+.moduleDescription {
+  color: var(--ifm-font-color-base);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+.moduleButton {
+  background-color: var(--ifm-color-primary) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 700 !important; /* Bold text */
+  text-decoration: none !important;
+  display: inline-block !important;
+  transition: all 0.3s ease !important;
+  align-self: center;
+}
+
+.moduleButton:hover {
+  background-color: var(--ifm-color-primary-dark) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4) !important;
+}
+
+[data-theme='dark'] .moduleButton {
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3) !important;
+}
+
+[data-theme='dark'] .moduleButton:hover {
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4) !important;
+}
+
+/* Swiper specific styles */
+.swiper {
+  padding: 2rem 0 !important;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: var(--ifm-color-primary) !important;
+  background: white;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 1.2rem !important;
+  font-weight: bold !important;
+}
+
+.swiper-pagination-bullet-active {
+  background: var(--ifm-color-primary) !important;
+}
+
+.swiper-pagination-bullet {
+  background: var(--ifm-color-primary-lighter) !important;
+  opacity: 0.5 !important;
+}
+
+/* Why Physical AI Matters section */
+.whyPhysicalAISection {
+  padding: 4rem 2rem;
+  background: var(--ifm-color-emphasis-100);
+}
+
+[data-theme='dark'] .whyPhysicalAISection {
+  background: var(--ifm-background-color);
+}
+
+.reasonsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+}
+
+.reasonCard {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: var(--ifm-card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 2rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  text-align: center;
+}
+
+[data-theme='dark'] .reasonCard {
+  background: rgba(30, 41, 59, 0.6);
+}
+
+.reasonCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(139, 92, 246, 0.2);
+}
+
+.reasonIcon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--ifm-color-primary);
+}
+
+.reasonTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--ifm-heading-color);
+}
+
+.reasonDescription {
+  color: var(--ifm-font-color-base);
+  line-height: 1.6;
+}
+
+.weeklyBreakdownTitle {
+  margin: 3rem 0 1rem 0;
+  text-align: center;
+}
+
+.weeklyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+}
+
+.weekCardLink {
+  text-decoration: none;
+  display: block;
+}
+
+.weekCardLink:hover {
+  cursor: pointer;
+}
+
+.weekCard {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: var(--ifm-card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 1.5rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .weekCard {
+  background: rgba(30, 41, 59, 0.6);
+}
+
+.weekCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.weekHeader {
+  display: flex;
+  align-items: flex-start; /* Align to top to ensure consistent alignment */
+  margin-bottom: 1rem;
+  gap: 0.75rem; /* Add consistent gap between week badge and title */
+}
+
+.weekNumber {
+  display: inline-flex;
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-darkest);
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-right: 1rem;
+  text-align: center;
+  min-width: 70px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: fit-content;
+  vertical-align: middle;
+}
+
+.weekTitle {
+  font-size: 1.1rem;
+  font-weight: 700; /* Bold title */
+  margin: 0;
+  color: var(--ifm-heading-color);
+  flex: 1;
+  align-self: center;
+}
+
+.weekTopics {
+  color: var(--ifm-font-color-base);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  padding-top: 0.5rem;
 }

@@ -1,0 +1,60 @@
+.personalization-container {
+  margin-bottom: 2rem;
+}
+
+.personalization-controls {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.personalization-toggle-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background-color: #8b5cf6; /* Primary purple color */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.personalization-toggle-button:hover:not(:disabled) {
+  background-color: #7c3aed; /* Darker purple on hover */
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+}
+
+.personalization-toggle-button.active {
+  background-color: #10b981; /* Green when active */
+}
+
+.personalization-toggle-button:disabled {
+  background-color: var(--ifm-color-emphasis-200);
+  cursor: not-allowed;
+}
+
+.personalization-note {
+  background-color: var(--ifm-color-emphasis-100);
+  border-left: 4px solid #8b5cf6;
+  padding: 1rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  color: var(--ifm-font-color-base);
+}
+
+.personalization-placeholder {
+  /* Fallback styles for SSR */
+}
+
+.personalization-note {
+  background-color: #f0f8ff;
+  border-left: 4px solid #8b5cf6;
+  padding: 1rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  color: #333;
+}

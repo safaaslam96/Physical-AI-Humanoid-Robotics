@@ -3,6 +3,8 @@ title: "Chapter 14: Bipedal Locomotion and Balance Control"
 sidebar_label: "Chapter 14: Bipedal Locomotion"
 ---
 
+
+
 # Chapter 14: Bipedal Locomotion and Balance Control
 
 ## Learning Objectives
@@ -1315,3 +1317,4 @@ This chapter covered the complex topic of bipedal locomotion and balance control
 ## Next Steps
 
 In Chapter 15, we'll explore manipulation and grasping techniques for humanoid robots, building upon the locomotion and balance foundations to enable dexterous interaction with the environment.
+

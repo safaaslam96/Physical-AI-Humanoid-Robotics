@@ -3,7 +3,7 @@ Main FastAPI application for the Physical AI and Humanoid Robotics book platform
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.api import auth_routes, chat_routes, personalization_routes, translation_routes, content_routes
+from src.api import auth_routes, chat_routes, personalization_routes, translation_routes, content_routes, rag_chat_routes
 from src.core.config import settings
 
 
@@ -30,6 +30,7 @@ app.include_router(chat_routes.router, prefix="/api/v1/chat", tags=["chat"])
 app.include_router(personalization_routes.router, prefix="/api/v1/personalization", tags=["personalization"])
 app.include_router(translation_routes.router, prefix="/api/v1/translation", tags=["translation"])
 app.include_router(content_routes.router, prefix="/api/v1/content", tags=["content"])
+app.include_router(rag_chat_routes.router, prefix="/api", tags=["rag-chat"])
 
 
 @app.get("/")

@@ -3,6 +3,8 @@ title: "Chapter 20: The Autonomous Humanoid Capstone Project"
 sidebar_label: "Chapter 20: Autonomous Humanoid Capstone"
 ---
 
+
+
 # Chapter 20: The Autonomous Humanoid Capstone Project
 
 ## Learning Objectives
@@ -2472,3 +2474,4 @@ The integration of multiple subsystems requires careful coordination, robust err
 ## Next Steps
 
 This completes our comprehensive exploration of Physical AI and Humanoid Robotics. The knowledge and skills developed throughout this book provide a solid foundation for advancing the field of humanoid robotics and developing the next generation of autonomous robots that can safely and effectively interact with humans in everyday environments.
+

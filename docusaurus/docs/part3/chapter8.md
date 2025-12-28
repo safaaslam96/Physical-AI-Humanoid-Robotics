@@ -3,6 +3,8 @@ title: "Chapter 8: Unity Visualization and Sensor Simulation"
 sidebar_label: "Chapter 8: Unity Visualization"
 ---
 
+
+
 # Chapter 8: Unity Visualization and Sensor Simulation
 
 ## Learning Objectives
@@ -461,3 +463,4 @@ This chapter introduced Unity as a powerful platform for high-fidelity robot vis
 ## Next Steps
 
 In Part IV, we'll explore the NVIDIA Isaac platform, diving into Isaac Sim for photorealistic simulation and Isaac ROS for hardware-accelerated perception, building upon the Unity foundation established in this chapter.
+

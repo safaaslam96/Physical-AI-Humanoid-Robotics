@@ -3,6 +3,8 @@ title: "Chapter 13: Humanoid Robot Kinematics and Dynamics"
 sidebar_label: "Chapter 13: Kinematics and Dynamics"
 ---
 
+
+
 # Chapter 13: Humanoid Robot Kinematics and Dynamics
 
 ## Learning Objectives
@@ -1122,3 +1124,4 @@ This chapter covered the fundamental kinematics and dynamics principles essentia
 ## Next Steps
 
 In Chapter 14, we'll explore bipedal locomotion and balance control in detail, building upon the kinematics and dynamics foundation established here.
+

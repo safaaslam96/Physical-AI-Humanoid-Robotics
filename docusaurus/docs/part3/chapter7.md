@@ -3,6 +3,8 @@ title: "Chapter 7: URDF and SDF Robot Description Formats"
 sidebar_label: "Chapter 7: URDF and SDF Formats"
 ---
 
+
+
 # Chapter 7: URDF and SDF Robot Description Formats
 
 ## Learning Objectives
@@ -417,3 +419,4 @@ This chapter covered the fundamental robot description formats (URDF and SDF) es
 ## Next Steps
 
 In Chapter 8, we'll explore Unity visualization and sensor simulation, expanding our digital twin capabilities to include high-fidelity rendering and advanced sensor modeling.
+

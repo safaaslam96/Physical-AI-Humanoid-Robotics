@@ -1,914 +1,533 @@
 ---
-title: "Chapter 5: ROS 2 Nodes, Topics, and Services Deep Dive"
-sidebar_label: "Chapter 5: ROS 2 Communication Deep Dive"
+title: "Weeks 3-5: ROS 2 Nodes, Topics, and Services"
+sidebar_label: "Weeks 3-5: ROS 2 Nodes, Topics, and Services"
 ---
 
-# Chapter 5: ROS 2 Nodes, Topics, and Services Deep Dive
-
-## Learning Objectives
-- Master advanced ROS 2 communication patterns
-- Implement the bridge between Python agents and ROS controllers using rclpy
-- Understand URDF (Unified Robot Description Format) for humanoid robots
-- Apply advanced communication techniques for Physical AI systems
-
-## Introduction
-
-This chapter delves deep into the advanced communication mechanisms of ROS 2, focusing on practical implementation of nodes, topics, and services in the context of Physical AI systems. We'll explore how to effectively bridge Python-based AI agents with ROS-based robot controllers, and examine the critical role of URDF in describing humanoid robot systems. Understanding these advanced communication patterns is essential for building sophisticated Physical AI applications.
-
-## Advanced Node Implementation
-
-### Node Composition and Management
-
-In complex Physical AI systems, nodes often need to be composed and managed as part of larger systems:
-
-```python
-#!/usr/bin/env python3
-from rclpy.node import Node
-from rclpy.executors import MultiThreadedExecutor
-from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
-from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
-import threading
 
 
-class ComposedRobotNode(Node):
-    def __init__(self):
-        super().__init__('composed_robot_node')
+# Weeks 3-5: ROS 2 Nodes, Topics, and Services
 
-        # Create multiple callback groups for different processing threads
-        self.sensor_group = MutuallyExclusiveCallbackGroup()
-        self.control_group = MutuallyExclusiveCallbackGroup()
-        self.ai_group = MutuallyExclusiveCallbackGroup()
+## Module 2: The Robotic Nervous System (ROS 2)
 
-        # Publishers with different QoS profiles
-        self.sensor_pub = self.create_publisher(
-            SensorData,
-            'robot/sensor_data',
-            qos_profile=self._get_sensor_qos()
-        )
+### Focus: Deep dive into ROS 2 communication patterns
 
-        self.control_pub = self.create_publisher(
-            ControlCommand,
-            'robot/control_cmd',
-            qos_profile=self._get_control_qos()
-        )
+### Learning Objectives
+- Master ROS 2 communication patterns: nodes, topics, services, and actions
+- Implement publishers and subscribers for data exchange
+- Create and use services for request/response communication
+- Understand the difference between topics and services
+- Bridge Python AI agents to ROS controllers using rclpy
+- Understand URDF (Unified Robot Description Format) for humanoids
 
-        # Subscribers with different callback groups
-        self.ai_cmd_sub = self.create_subscription(
-            AICommand,
-            'ai/commands',
-            self.ai_command_callback,
-            qos_profile=self._get_ai_qos(),
-            callback_group=self.ai_group
-        )
+## ROS 2 Communication Patterns
 
-        self.user_cmd_sub = self.create_subscription(
-            UserCommand,
-            'user/commands',
-            self.user_command_callback,
-            qos_profile=self._get_user_qos(),
-            callback_group=self.control_group
-        )
+### Nodes, Topics, Services, and Actions Overview
 
-        # Create timers with different callback groups
-        self.sensor_timer = self.create_timer(
-            0.01,  # 100Hz for sensor processing
-            self.sensor_processing,
-            callback_group=self.sensor_group
-        )
+ROS 2 provides several communication patterns:
 
-        self.control_timer = self.create_timer(
-            0.02,  # 50Hz for control
-            self.control_loop,
-            callback_group=self.control_group
-        )
+- **Nodes**: Processes that perform computation
+- **Topics**: Asynchronous publish/subscribe communication
+- **Services**: Synchronous request/response communication
+- **Actions**: Asynchronous goal-oriented communication with feedback
 
-        self.ai_timer = self.create_timer(
-            0.1,   # 10Hz for AI processing
-            self.ai_processing,
-            callback_group=self.ai_group
-        )
+### Deep Dive into Topics
 
-    def _get_sensor_qos(self):
-        """QoS for high-frequency sensor data"""
-        return QoSProfile(
-            reliability=ReliabilityPolicy.RELIABLE,
-            durability=DurabilityPolicy.VOLATILE,
-            history=HistoryPolicy.KEEP_LAST,
-            depth=1
-        )
-
-    def _get_control_qos(self):
-        """QoS for critical control commands"""
-        return QoSProfile(
-            reliability=ReliabilityPolicy.RELIABLE,
-            durability=DurabilityPolicy.TRANSIENT_LOCAL,
-            history=HistoryPolicy.KEEP_LAST,
-            depth=10
-        )
-
-    def _get_ai_qos(self):
-        """QoS for AI-generated commands"""
-        return QoSProfile(
-            reliability=ReliabilityPolicy.BEST_EFFORT,
-            durability=DurabilityPolicy.VOLATILE,
-            history=HistoryPolicy.KEEP_LAST,
-            depth=5
-        )
-
-    def sensor_processing(self):
-        """High-frequency sensor processing"""
-        # Process sensor data
-        sensor_data = self.acquire_sensor_data()
-        self.sensor_pub.publish(sensor_data)
-
-    def control_loop(self):
-        """Control loop with safety checks"""
-        # Implement control logic with safety constraints
-        control_cmd = self.compute_control_command()
-
-        # Safety check before publishing
-        if self.is_safe_to_execute(control_cmd):
-            self.control_pub.publish(control_cmd)
-
-    def ai_processing(self):
-        """AI processing logic"""
-        # Process AI decisions
-        pass
-
-    def ai_command_callback(self, msg):
-        """Handle AI-generated commands"""
-        self.get_logger().info(f'AI Command received: {msg.command}')
-        # Process AI command with safety validation
-
-    def user_command_callback(self, msg):
-        """Handle user commands"""
-        self.get_logger().info(f'User Command received: {msg.command}')
-        # Process user command with priority handling
-```
-
-### Node Lifecycle Management
-
-Advanced node management includes lifecycle considerations:
+Topics provide asynchronous, many-to-many communication using a publish-subscribe model:
 
 ```python
-from rclpy.lifecycle import LifecycleNode, LifecycleState
-from rclpy.lifecycle import TransitionCallbackReturn
-from rclpy.action import ActionServer, GoalResponse, CancelResponse
-from rclpy.executors import MultiThreadedExecutor
-import rclpy
-
-
-class LifecycleRobotController(LifecycleNode):
-    def __init__(self):
-        super().__init__('lifecycle_robot_controller')
-
-        # Initialize components that will be managed through lifecycle
-        self.publisher = None
-        self.subscriber = None
-        self.service = None
-        self.action_server = None
-        self.timer = None
-
-    def on_configure(self, state):
-        """Configure the node - create publishers, subscribers, etc."""
-        self.get_logger().info('Configuring robot controller')
-
-        # Create communication interfaces
-        self.publisher = self.create_publisher(RobotState, 'robot/state', 10)
-        self.subscriber = self.create_subscription(
-            RobotCommand, 'robot/command', self.command_callback, 10
-        )
-        self.service = self.create_service(GetRobotInfo, 'get_robot_info', self.info_service)
-
-        # Create action server for complex tasks
-        self.action_server = ActionServer(
-            self,
-            RobotNavigation,
-            'navigate_to_pose',
-            self.execute_navigation,
-            goal_callback=self.navigation_goal_callback,
-            cancel_callback=self.navigation_cancel_callback
-        )
-
-        # Create timers
-        self.timer = self.create_timer(0.1, self.state_publisher)
-
-        return TransitionCallbackReturn.SUCCESS
-
-    def on_activate(self, state):
-        """Activate the node - start active operations"""
-        self.get_logger().info('Activating robot controller')
-
-        # Enable active operations
-        self.publisher.enable()
-
-        return super().on_activate(state)
-
-    def on_deactivate(self, state):
-        """Deactivate the node - pause active operations"""
-        self.get_logger().info('Deactivating robot controller')
-
-        # Disable active operations
-        self.publisher.disable()
-
-        return super().on_deactivate(state)
-
-    def on_cleanup(self, state):
-        """Clean up resources"""
-        self.get_logger().info('Cleaning up robot controller')
-
-        # Destroy communication interfaces
-        self.destroy_publisher(self.publisher)
-        self.destroy_subscription(self.subscriber)
-        self.destroy_service(self.service)
-        self.destroy_timer(self.timer)
-        self.action_server.destroy()
-
-        self.publisher = None
-        self.subscriber = None
-        self.service = None
-        self.timer = None
-        self.action_server = None
-
-        return TransitionCallbackReturn.SUCCESS
-
-    def command_callback(self, msg):
-        """Handle robot commands"""
-        if self.get_current_state().id() == LifecycleState.ACTIVE.id():
-            # Process command only when active
-            self.execute_command(msg)
-
-    def state_publisher(self):
-        """Publish robot state"""
-        if self.get_current_state().id() == LifecycleState.ACTIVE.id():
-            state_msg = RobotState()
-            # Populate state message
-            self.publisher.publish(state_msg)
-```
-
-## Deep Dive into Topics and Message Passing
-
-### Advanced Topic Patterns
-
-#### Fan-in Pattern
-Multiple nodes publishing to a single topic:
-
-```python
-class SensorFusionNode(Node):
-    def __init__(self):
-        super().__init__('sensor_fusion')
-
-        # Multiple sensor subscribers
-        self.imu_sub = self.create_subscription(
-            Imu, 'sensors/imu', self.imu_callback, 10
-        )
-        self.lidar_sub = self.create_subscription(
-            LaserScan, 'sensors/lidar', self.lidar_callback, 10
-        )
-        self.camera_sub = self.create_subscription(
-            Image, 'sensors/camera', self.camera_callback, 10
-        )
-
-        # Single fused output
-        self.fused_pub = self.create_publisher(
-            SensorFusionOutput, 'sensors/fused_data', 10
-        )
-
-        # Data fusion timer
-        self.fusion_timer = self.create_timer(0.05, self.fuse_sensor_data)
-
-        # Storage for sensor data
-        self.imu_data = None
-        self.lidar_data = None
-        self.camera_data = None
-
-    def imu_callback(self, msg):
-        """Store IMU data"""
-        self.imu_data = msg
-        self.get_logger().debug('Received IMU data')
-
-    def lidar_callback(self, msg):
-        """Store LIDAR data"""
-        self.lidar_data = msg
-        self.get_logger().debug('Received LIDAR data')
-
-    def camera_callback(self, msg):
-        """Store camera data"""
-        self.camera_data = msg
-        self.get_logger().debug('Received camera data')
-
-    def fuse_sensor_data(self):
-        """Fuse sensor data into unified representation"""
-        if all([self.imu_data, self.lidar_data, self.camera_data]):
-            fused_msg = SensorFusionOutput()
-            # Implement sensor fusion algorithm
-            fused_msg.timestamp = self.get_clock().now().to_msg()
-            fused_msg.imu_data = self.imu_data
-            fused_msg.lidar_data = self.lidar_data
-            fused_msg.camera_data = self.camera_data
-
-            # Apply fusion algorithm
-            fused_msg.fused_state = self.apply_sensor_fusion(
-                self.imu_data, self.lidar_data, self.camera_data
-            )
-
-            self.fused_pub.publish(fused_msg)
-```
-
-#### Fan-out Pattern
-Single publisher to multiple subscribers:
-
-```python
-class RobotStatePublisher(Node):
-    def __init__(self):
-        super().__init__('robot_state_publisher')
-
-        # Single publisher for robot state
-        self.state_pub = self.create_publisher(
-            RobotState, 'robot/state', 10
-        )
-
-        # Multiple subscribers will receive the same data
-        self.state_timer = self.create_timer(0.01, self.publish_robot_state)
-
-    def publish_robot_state(self):
-        """Publish robot state to multiple subscribers"""
-        state_msg = RobotState()
-        # Populate with current robot state
-        state_msg.header.stamp = self.get_clock().now().to_msg()
-        state_msg.joint_states = self.get_joint_states()
-        state_msg.odometry = self.get_odometry()
-        state_msg.imu = self.get_imu_data()
-
-        self.state_pub.publish(state_msg)
-```
-
-### Quality of Service (QoS) Advanced Configuration
-
-```python
-from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy, Lifespan
-
-
-class QoSDemonstrationNode(Node):
-    def __init__(self):
-        super().__init__('qos_demo')
-
-        # Different QoS profiles for different use cases
-
-        # Real-time sensor data (high frequency, no need to keep old data)
-        self.sensor_qos = QoSProfile(
-            reliability=ReliabilityPolicy.RELIABLE,
-            durability=DurabilityPolicy.VOLATILE,
-            history=HistoryPolicy.KEEP_LAST,
-            depth=1,
-            deadline=Duration(seconds=0.01)  # Must arrive within 10ms
-        )
-
-        # Safety-critical commands (must be delivered, keep for recovery)
-        self.safety_qos = QoSProfile(
-            reliability=ReliabilityPolicy.RELIABLE,
-            durability=DurabilityPolicy.TRANSIENT_LOCAL,
-            history=HistoryPolicy.KEEP_ALL,
-            lifespan=Lifespan(seconds=30.0)  # Keep for 30 seconds
-        )
-
-        # Configuration parameters (infrequent, must be persistent)
-        self.config_qos = QoSProfile(
-            reliability=ReliabilityPolicy.RELIABLE,
-            durability=DurabilityPolicy.TRANSIENT_LOCAL,
-            history=HistoryPolicy.KEEP_LAST,
-            depth=1
-        )
-
-        # Publishers with different QoS
-        self.sensor_pub = self.create_publisher(SensorData, 'sensors/data', self.sensor_qos)
-        self.safety_pub = self.create_publisher(SafetyCommand, 'safety/commands', self.safety_qos)
-        self.config_pub = self.create_publisher(ConfigData, 'config/parameters', self.config_qos)
-```
-
-## Services and Advanced Communication
-
-### Advanced Service Implementation
-
-```python
-from rclpy.service import Service
-from rclpy.callback_groups import ReentrantCallbackGroup
-
-
-class AdvancedRobotServices(Node):
-    def __init__(self):
-        super().__init__('robot_services')
-
-        # Use reentrant callback group for services that might call other services
-        self.service_group = ReentrantCallbackGroup()
-
-        # Multiple services with different purposes
-        self.move_service = self.create_service(
-            MoveRobot,
-            'robot/move',
-            self.move_robot_callback,
-            callback_group=self.service_group
-        )
-
-        self.get_state_service = self.create_service(
-            GetRobotState,
-            'robot/get_state',
-            self.get_state_callback,
-            callback_group=self.service_group
-        )
-
-        self.execute_action_service = self.create_service(
-            ExecuteAction,
-            'robot/execute_action',
-            self.execute_action_callback,
-            callback_group=self.service_group
-        )
-
-    def move_robot_callback(self, request, response):
-        """Handle robot movement requests"""
-        self.get_logger().info(f'Moving robot to position: {request.target_position}')
-
-        try:
-            # Validate request
-            if not self.is_valid_target(request.target_position):
-                response.success = False
-                response.message = 'Invalid target position'
-                return response
-
-            # Execute movement
-            success = self.execute_movement(request.target_position)
-
-            response.success = success
-            response.message = 'Movement completed' if success else 'Movement failed'
-
-        except Exception as e:
-            self.get_logger().error(f'Error in move_robot: {e}')
-            response.success = False
-            response.message = f'Error: {str(e)}'
-
-        return response
-
-    def get_state_callback(self, request, response):
-        """Provide current robot state"""
-        response.state = self.get_current_robot_state()
-        response.timestamp = self.get_clock().now().to_msg()
-        return response
-
-    def execute_action_callback(self, request, response):
-        """Execute complex robot action"""
-        self.get_logger().info(f'Executing action: {request.action_name}')
-
-        # Complex action execution
-        result = self.execute_complex_action(request)
-
-        response.success = result.success
-        response.message = result.message
-        response.execution_time = result.execution_time
-
-        return response
-```
-
-## Bridging Python Agents to ROS Controllers
-
-### AI Agent Integration Pattern
-
-```python
+# Publisher example
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
-from geometry_msgs.msg import Twist
-from sensor_msgs.msg import LaserScan
-import numpy as np
-import tensorflow as tf
-from cv_bridge import CvBridge
 
-
-class AIAgentBridge(Node):
+class Talker(Node):
     def __init__(self):
-        super().__init__('ai_agent_bridge')
+        super().__init__('talker')
+        self.publisher = self.create_publisher(String, 'chatter', 10)
+        timer_period = 0.5  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.i = 0
 
-        # ROS interfaces
+    def timer_callback(self):
+        msg = String()
+        msg.data = f'Hello World: {self.i}'
+        self.publisher.publish(msg)
+        self.get_logger().info(f'Publishing: "{msg.data}"')
+        self.i += 1
+
+# Subscriber example
+class Listener(Node):
+    def __init__(self):
+        super().__init__('listener')
+        self.subscription = self.create_subscription(
+            String,
+            'chatter',
+            self.listener_callback,
+            10)
+        self.subscription  # prevent unused variable warning
+
+    def listener_callback(self, msg):
+        self.get_logger().info(f'I heard: "{msg.data}"')
+```
+
+### Quality of Service (QoS) Settings for Topics
+
+```python
+from rclpy.qos import QoSProfile, QoSHistoryPolicy, QoSReliabilityPolicy, QoSDurabilityPolicy
+
+# Configure QoS for different needs
+# Reliable communication with message history
+reliable_qos = QoSProfile(
+    depth=10,
+    reliability=QoSReliabilityPolicy.RELIABLE,
+    history=QoSHistoryPolicy.KEEP_LAST,
+    durability=QoSDurabilityPolicy.VOLATILE
+)
+
+# Best effort for real-time data (like sensor streams)
+best_effort_qos = QoSProfile(
+    depth=5,
+    reliability=QoSReliabilityPolicy.BEST_EFFORT,
+    history=QoSHistoryPolicy.KEEP_LAST,
+    durability=QoSDurabilityPolicy.VOLATILE
+)
+
+# Publisher with custom QoS
+publisher = self.create_publisher(String, 'sensor_data', best_effort_qos)
+```
+
+### Services for Request/Response Communication
+
+Services provide synchronous communication:
+
+```python
+# Service definition (in srv/AddTwoInts.srv)
+# int64 a
+# int64 b
+# ---
+# int64 sum
+
+# Service server
+from example_interfaces.srv import AddTwoInts
+
+class AddTwoIntsService(Node):
+    def __init__(self):
+        super().__init__('add_two_ints_service')
+        self.srv = self.create_service(
+            AddTwoInts,
+            'add_two_ints',
+            self.add_two_ints_callback
+        )
+
+    def add_two_ints_callback(self, request, response):
+        response.sum = request.a + request.b
+        self.get_logger().info(f'Incoming request: {request.a} + {request.b} = {response.sum}')
+        return response
+
+# Service client
+class AddTwoIntsClient(Node):
+    def __init__(self):
+        super().__init__('add_two_ints_client')
+        self.cli = self.create_client(AddTwoInts, 'add_two_ints')
+
+    def send_request(self, a, b):
+        # Wait for service to be available
+        while not self.cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('Service not available, waiting again...')
+
+        # Create and send request
+        request = AddTwoInts.Request()
+        request.a = a
+        request.b = b
+
+        # Send asynchronously
+        self.future = self.cli.call_async(request)
+        rclpy.spin_until_future_complete(self, self.future)
+
+        return self.future.result()
+```
+
+### Actions for Complex Task Management
+
+Actions provide goal-oriented communication with feedback:
+
+```python
+# Action definition (in action/Fibonacci.action)
+# int32 order
+# ---
+# int32[] sequence
+# ---
+# int32[] partial_sequence
+
+from rclpy.action import ActionClient, ActionServer
+from rclpy.node import Node
+from example_interfaces.action import Fibonacci
+
+class FibonacciActionServer(Node):
+    def __init__(self):
+        super().__init__('fibonacci_action_server')
+        self._action_server = ActionServer(
+            self,
+            Fibonacci,
+            'fibonacci',
+            self.execute_callback
+        )
+
+    def execute_callback(self, goal_handle):
+        self.get_logger().info('Executing goal...')
+
+        # Initialize result
+        feedback_msg = Fibonacci.Feedback()
+        feedback_msg.partial_sequence = [0, 1]
+
+        # Execute the action
+        for i in range(1, goal_handle.request.order):
+            if goal_handle.is_cancel_requested:
+                goal_handle.canceled()
+                self.get_logger().info('Goal canceled')
+                return Fibonacci.Result()
+
+            feedback_msg.partial_sequence.append(
+                feedback_msg.partial_sequence[i] + feedback_msg.partial_sequence[i-1]
+            )
+
+            # Publish feedback
+            goal_handle.publish_feedback(feedback_msg)
+
+        # Complete the goal
+        goal_handle.succeed()
+        result = Fibonacci.Result()
+        result.sequence = feedback_msg.partial_sequence
+        self.get_logger().info(f'Goal succeeded with result: {result.sequence}')
+
+        return result
+
+class FibonacciActionClient(Node):
+    def __init__(self):
+        super().__init__('fibonacci_action_client')
+        self._action_client = ActionClient(self, Fibonacci, 'fibonacci')
+
+    def send_goal(self, order):
+        goal_msg = Fibonacci.Goal()
+        goal_msg.order = order
+
+        self._action_client.wait_for_server()
+        self._send_goal_future = self._action_client.send_goal_async(
+            goal_msg,
+            feedback_callback=self.feedback_callback
+        )
+        self._send_goal_future.add_done_callback(self.goal_response_callback)
+
+    def goal_response_callback(self, future):
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            self.get_logger().info('Goal rejected :(')
+            return
+
+        self.get_logger().info('Goal accepted :)')
+        self._get_result_future = goal_handle.get_result_async()
+        self._get_result_future.add_done_callback(self.get_result_callback)
+
+    def get_result_callback(self, future):
+        result = future.result().result
+        self.get_logger().info(f'Result: {result.sequence}')
+        rclpy.shutdown()
+
+    def feedback_callback(self, feedback_msg):
+        feedback = feedback_msg.feedback
+        self.get_logger().info(f'Received feedback: {feedback.partial_sequence}')
+```
+
+## Bridging Python AI Agents to ROS Controllers
+
+### Using rclpy for AI Integration
+
+```python
+import rclpy
+from rclpy.node import Node
+import numpy as np
+from std_msgs.msg import String
+from sensor_msgs.msg import JointState
+from geometry_msgs.msg import Twist
+from nav_msgs.msg import Odometry
+import tensorflow as tf  # Example AI framework
+
+class AIBridgeNode(Node):
+    def __init__(self):
+        super().__init__('ai_bridge_node')
+
+        # Publishers for robot commands
         self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.joint_cmd_pub = self.create_publisher(JointState, '/joint_commands', 10)
+
+        # Subscribers for sensor data
+        self.odom_sub = self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
+        self.joint_state_sub = self.create_subscription(JointState, '/joint_states', self.joint_state_callback, 10)
         self.laser_sub = self.create_subscription(LaserScan, '/scan', self.laser_callback, 10)
-        self.image_sub = self.create_subscription(Image, '/camera/image_raw', self.image_callback, 10)
 
-        # AI agent interfaces
+        # Initialize AI model
         self.ai_model = self.load_ai_model()
-        self.cv_bridge = CvBridge()
 
-        # Data storage
-        self.latest_laser_data = None
-        self.latest_image_data = None
-        self.ai_command_queue = []
+        # Robot state storage
+        self.current_odom = None
+        self.current_joints = None
+        self.current_laser = None
 
-        # AI processing timer
-        self.ai_timer = self.create_timer(0.1, self.ai_processing_loop)
-
-        # Safety parameters
-        self.safety_distance = 0.5  # meters
-        self.max_velocity = 1.0     # m/s
+        # Control timer
+        self.control_timer = self.create_timer(0.1, self.ai_control_loop)  # 10 Hz control loop
 
     def load_ai_model(self):
-        """Load the AI model for navigation"""
+        """Load the AI model for robot control"""
+        # This could be a pre-trained model or a neural network
+        # For example, a policy network for navigation or manipulation
         try:
-            # Load your trained model
-            model = tf.keras.models.load_model('path/to/navigation_model')
+            # Load a pre-trained model
+            model = tf.keras.models.load_model('robot_policy_model.h5')
             self.get_logger().info('AI model loaded successfully')
             return model
         except Exception as e:
-            self.get_logger().error(f'Failed to load AI model: {e}')
+            self.get_logger().warn(f'Could not load AI model: {e}')
+            # Fallback to simple control logic
             return None
 
+    def odom_callback(self, msg):
+        """Store odometry data"""
+        self.current_odom = msg
+
+    def joint_state_callback(self, msg):
+        """Store joint state data"""
+        self.current_joints = msg
+
     def laser_callback(self, msg):
-        """Process laser scan data"""
-        self.latest_laser_data = np.array(msg.ranges)
-        # Filter out invalid ranges (inf, nan)
-        self.latest_laser_data = np.where(
-            (self.latest_laser_data == float('inf')) |
-            (self.latest_laser_data == float('nan')),
-            msg.range_max,
-            self.latest_laser_data
-        )
+        """Store laser scan data"""
+        self.current_laser = msg
 
-    def image_callback(self, msg):
-        """Process camera image data"""
-        try:
-            cv_image = self.cv_bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-            # Resize for model input
-            input_image = cv2.resize(cv_image, (224, 224))
-            # Normalize
-            input_image = input_image.astype(np.float32) / 255.0
-            self.latest_image_data = input_image
-        except Exception as e:
-            self.get_logger().error(f'Error processing image: {e}')
+    def ai_control_loop(self):
+        """Main AI control loop"""
+        # Check if we have all required sensor data
+        if not all([self.current_odom, self.current_laser]):
+            return  # Wait for complete sensor data
 
-    def ai_processing_loop(self):
-        """Main AI processing loop"""
-        if self.ai_model is None:
-            return
+        # Prepare input for AI model
+        sensor_input = self.prepare_sensor_input()
 
-        if self.latest_laser_data is not None and self.latest_image_data is not None:
-            # Prepare input for AI model
-            model_input = self.prepare_model_input(
-                self.latest_laser_data,
-                self.latest_image_data
-            )
+        # Get AI decision
+        if self.ai_model:
+            # Use AI model to determine action
+            action = self.ai_model.predict(sensor_input)
+            cmd_vel = self.convert_action_to_cmd_vel(action)
+        else:
+            # Fallback to simple reactive control
+            cmd_vel = self.simple_reactive_control()
 
-            # Get AI prediction
-            ai_output = self.ai_model.predict(np.expand_dims(model_input, axis=0))
+        # Publish command
+        self.cmd_vel_pub.publish(cmd_vel)
 
-            # Convert AI output to ROS command
-            cmd_vel = self.convert_ai_output_to_cmd_vel(ai_output)
+    def prepare_sensor_input(self):
+        """Prepare sensor data for AI model"""
+        # Extract relevant features from sensor data
+        linear_vel = self.current_odom.twist.twist.linear.x
+        angular_vel = self.current_odom.twist.twist.angular.z
 
-            # Apply safety checks
-            safe_cmd_vel = self.apply_safety_constraints(cmd_vel)
+        # Process laser scan (e.g., get distances to obstacles in different directions)
+        laser_ranges = np.array(self.current_laser.ranges)
+        laser_ranges = np.nan_to_num(laser_ranges, nan=np.inf)  # Handle NaN values
 
-            # Publish command
-            self.cmd_vel_pub.publish(safe_cmd_vel)
+        # Create input vector for AI model
+        # This is an example - actual implementation depends on your AI model
+        input_vector = np.concatenate([
+            [linear_vel, angular_vel],  # Current velocity
+            laser_ranges[::10]  # Downsampled laser ranges (every 10th value)
+        ])
 
-    def prepare_model_input(self, laser_data, image_data):
-        """Prepare sensor data for AI model input"""
-        # Normalize laser data
-        normalized_laser = laser_data / np.max(laser_data) if np.max(laser_data) > 0 else laser_data
+        return input_vector.reshape(1, -1)  # Reshape for model prediction
 
-        # Combine sensor data (this is a simplified example)
-        # In practice, you might use more sophisticated fusion techniques
-        return {
-            'laser': normalized_laser,
-            'image': image_data
-        }
+    def convert_action_to_cmd_vel(self, action):
+        """Convert AI action to Twist command"""
+        cmd = Twist()
+        # Interpret action output from AI model
+        # This depends on how your AI model is trained
+        cmd.linear.x = float(action[0][0])  # Example: first output is linear velocity
+        cmd.angular.z = float(action[0][1])  # Example: second output is angular velocity
+        return cmd
 
-    def convert_ai_output_to_cmd_vel(self, ai_output):
-        """Convert AI model output to Twist message"""
-        cmd_vel = Twist()
+    def simple_reactive_control(self):
+        """Fallback simple reactive control"""
+        cmd = Twist()
 
-        # Example: AI outputs [linear_velocity, angular_velocity]
-        cmd_vel.linear.x = float(ai_output[0][0])
-        cmd_vel.angular.z = float(ai_output[0][1])
+        # Simple obstacle avoidance based on laser scan
+        if self.current_laser:
+            # Check for obstacles in front (e.g., 30-degree cone in front)
+            front_ranges = self.current_laser.ranges[:15] + self.current_laser.ranges[-15:]  # Approximate front
+            min_front_dist = min([r for r in front_ranges if r > 0 and r < float('inf')], default=float('inf'))
 
-        return cmd_vel
+            if min_front_dist < 0.5:  # Obstacle too close
+                cmd.angular.z = 0.5  # Turn away
+            else:
+                cmd.linear.x = 0.3  # Move forward
 
-    def apply_safety_constraints(self, cmd_vel):
-        """Apply safety constraints to commands"""
-        # Limit velocities
-        cmd_vel.linear.x = max(-self.max_velocity, min(self.max_velocity, cmd_vel.linear.x))
-        cmd_vel.angular.z = max(-1.0, min(1.0, cmd_vel.angular.z))
-
-        # Safety check based on laser data
-        if self.latest_laser_data is not None:
-            min_distance = np.min(self.latest_laser_data)
-            if min_distance < self.safety_distance:
-                # Emergency stop if obstacle is too close
-                cmd_vel.linear.x = 0.0
-                cmd_vel.angular.z = 0.0
-                self.get_logger().warn('Safety stop: obstacle detected')
-
-        return cmd_vel
-
-
-def main(args=None):
-    rclpy.init(args=args)
-
-    ai_agent_bridge = AIAgentBridge()
-
-    try:
-        rclpy.spin(ai_agent_bridge)
-    except KeyboardInterrupt:
-        ai_agent_bridge.get_logger().info('Shutting down AI agent bridge')
-    finally:
-        ai_agent_bridge.destroy_node()
-        rclpy.shutdown()
-
-
-if __name__ == '__main__':
-    main()
+        return cmd
 ```
 
-## URDF for Humanoid Robots
+## Understanding URDF for Humanoids
 
-### Understanding URDF Structure
+### Unified Robot Description Format (URDF)
 
-URDF (Unified Robot Description Format) is XML-based and describes robot kinematics:
+URDF is an XML format for representing a robot model:
 
 ```xml
 <?xml version="1.0"?>
-<robot name="humanoid_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-  <!-- Materials -->
-  <material name="black">
-    <color rgba="0.0 0.0 0.0 1.0"/>
-  </material>
-  <material name="blue">
-    <color rgba="0.0 0.0 0.8 1.0"/>
-  </material>
-  <material name="green">
-    <color rgba="0.0 0.8 0.0 1.0"/>
-  </material>
-  <material name="grey">
-    <color rgba="0.2 0.2 0.2 1.0"/>
-  </material>
-  <material name="orange">
-    <color rgba="1.0 0.423529411765 0.0392156862745 1.0"/>
-  </material>
-  <material name="brown">
-    <color rgba="0.870588235294 0.811764705882 0.764705882353 1.0"/>
-  </material>
-  <material name="red">
-    <color rgba="0.8 0.0 0.0 1.0"/>
-  </material>
-  <material name="white">
-    <color rgba="1.0 1.0 1.0 1.0"/>
-  </material>
-
-  <!-- Base Link -->
+<robot name="humanoid_robot">
+  <!-- Base link - the root of the robot -->
   <link name="base_link">
     <visual>
-      <origin xyz="0 0 0.1" rpy="0 0 0"/>
       <geometry>
-        <box size="0.5 0.3 0.2"/>
+        <box size="0.3 0.3 0.1"/>
       </geometry>
-      <material name="white"/>
+      <material name="blue">
+        <color rgba="0 0 1 1"/>
+      </material>
     </visual>
     <collision>
-      <origin xyz="0 0 0.1" rpy="0 0 0"/>
       <geometry>
-        <box size="0.5 0.3 0.2"/>
+        <box size="0.3 0.3 0.1"/>
       </geometry>
     </collision>
     <inertial>
-      <origin xyz="0 0 0.1" rpy="0 0 0"/>
-      <mass value="10.0"/>
-      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1"/>
+      <mass value="10"/>
+      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
     </inertial>
   </link>
 
-  <!-- Torso -->
-  <link name="torso">
-    <visual>
-      <origin xyz="0 0 0.3" rpy="0 0 0"/>
-      <geometry>
-        <box size="0.3 0.2 0.6"/>
-      </geometry>
-      <material name="grey"/>
-    </visual>
-    <collision>
-      <origin xyz="0 0 0.3" rpy="0 0 0"/>
-      <geometry>
-        <box size="0.3 0.2 0.6"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <origin xyz="0 0 0.3" rpy="0 0 0"/>
-      <mass value="8.0"/>
-      <inertia ixx="0.2" ixy="0.0" ixz="0.0" iyy="0.2" iyz="0.0" izz="0.1"/>
-    </inertial>
-  </link>
-
-  <!-- Joints connecting links -->
-  <joint name="base_to_torso" type="fixed">
-    <parent link="base_link"/>
-    <child link="torso"/>
-    <origin xyz="0 0 0.2" rpy="0 0 0"/>
-  </joint>
-
-  <!-- Head -->
+  <!-- Head link -->
   <link name="head">
     <visual>
-      <origin xyz="0 0 0.1" rpy="0 0 0"/>
       <geometry>
         <sphere radius="0.1"/>
       </geometry>
-      <material name="white"/>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
     </visual>
     <collision>
-      <origin xyz="0 0 0.1" rpy="0 0 0"/>
       <geometry>
         <sphere radius="0.1"/>
       </geometry>
     </collision>
     <inertial>
-      <origin xyz="0 0 0.1" rpy="0 0 0"/>
-      <mass value="2.0"/>
-      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
+      <mass value="2"/>
+      <inertia ixx="0.04" ixy="0" ixz="0" iyy="0.04" iyz="0" izz="0.04"/>
     </inertial>
   </link>
 
-  <joint name="torso_to_head" type="revolute">
-    <parent link="torso"/>
-    <child link="head"/>
-    <origin xyz="0 0 0.6" rpy="0 0 0"/>
-    <axis xyz="0 1 0"/>
-    <limit lower="-0.5" upper="0.5" effort="100" velocity="1.0"/>
-  </joint>
-
-  <!-- Left Arm -->
-  <link name="left_shoulder">
-    <visual>
-      <origin xyz="0 0.1 0.1" rpy="0 0 0"/>
-      <geometry>
-        <cylinder radius="0.05" length="0.2"/>
-      </geometry>
-      <material name="blue"/>
-    </visual>
-    <inertial>
-      <mass value="1.0"/>
-      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
-    </inertial>
-  </link>
-
-  <joint name="torso_to_left_shoulder" type="revolute">
-    <parent link="torso"/>
-    <child link="left_shoulder"/>
-    <origin xyz="0.1 0.1 0.3" rpy="0 0 0"/>
-    <axis xyz="0 0 1"/>
-    <limit lower="-1.57" upper="1.57" effort="50" velocity="2.0"/>
-  </joint>
-
-</robot>
-```
-
-### URDF with Transmission and Gazebo Integration
-
-```xml
-<?xml version="1.0"?>
-<robot name="humanoid_with_transmissions" xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-  <!-- Include other URDF files -->
-  <xacro:include filename="$(find my_robot_description)/urdf/materials.urdf.xacro"/>
-  <xacro:include filename="$(find my_robot_description)/urdf/transmissions.urdf.xacro"/>
-
-  <!-- Robot base -->
-  <link name="base_link">
-    <inertial>
-      <mass value="10.0"/>
-      <origin xyz="0 0 0.1"/>
-      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1"/>
-    </inertial>
-
-    <visual>
-      <origin xyz="0 0 0.1"/>
-      <geometry>
-        <box size="0.5 0.5 0.2"/>
-      </geometry>
-    </visual>
-
-    <collision>
-      <origin xyz="0 0 0.1"/>
-      <geometry>
-        <box size="0.5 0.5 0.2"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <!-- Gazebo-specific tags -->
-  <gazebo reference="base_link">
-    <material>Gazebo/White</material>
-    <mu1>0.2</mu1>
-    <mu2>0.2</mu2>
-  </gazebo>
-
-  <!-- Joint with transmission for ROS control -->
-  <joint name="joint1" type="revolute">
+  <!-- Joint connecting head to base -->
+  <joint name="neck_joint" type="revolute">
     <parent link="base_link"/>
-    <child link="link1"/>
-    <origin xyz="0 0 0.1" rpy="0 0 0"/>
-    <axis xyz="0 0 1"/>
-    <limit lower="-3.14" upper="3.14" effort="100" velocity="1.0"/>
-    <dynamics damping="0.1" friction="0.0"/>
+    <child link="head"/>
+    <origin xyz="0 0 0.2" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.5" upper="0.5" effort="10" velocity="1"/>
   </joint>
 
-  <!-- Transmission for ros_control -->
-  <transmission name="trans_joint1">
-    <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint1">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-    </joint>
-    <actuator name="motor1">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-      <mechanicalReduction>1</mechanicalReduction>
-    </actuator>
-  </transmission>
+  <!-- Left arm -->
+  <link name="left_upper_arm">
+    <visual>
+      <geometry>
+        <cylinder length="0.3" radius="0.05"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.3" radius="0.05"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.0025"/>
+    </inertial>
+  </link>
 
+  <!-- Left arm joint -->
+  <joint name="left_shoulder_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="left_upper_arm"/>
+    <origin xyz="0.1 0.15 0.1" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="1"/>
+  </joint>
 </robot>
 ```
 
-## Integration with Physical AI Systems
-
-### Multi-Agent Communication Pattern
+### Using URDF in ROS 2 Launch Files
 
 ```python
-class MultiAgentRobotSystem(Node):
-    def __init__(self):
-        super().__init__('multi_agent_system')
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+from launch.substitutions import Command
+from launch_ros.substitutions import FindPackageShare
 
-        # AI agent communication
-        self.ai_command_pub = self.create_publisher(AICommand, 'ai/commands', 10)
-        self.ai_feedback_sub = self.create_subscription(AIFeedback, 'ai/feedback', self.ai_feedback_callback, 10)
+def generate_launch_description():
+    # Declare arguments
+    declared_arguments = [
+        DeclareLaunchArgument(
+            'robot_description',
+            default_value=[FindPackageShare('my_robot_description'), '/urdf/my_robot.urdf'],
+            description='Full path to robot description file to load'
+        )
+    ]
 
-        # Robot controller communication
-        self.robot_command_pub = self.create_publisher(RobotCommand, 'robot/commands', 10)
-        self.robot_state_sub = self.create_subscription(RobotState, 'robot/state', self.robot_state_callback, 10)
+    # Robot state publisher node
+    robot_state_publisher_node = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        parameters=[
+            {'robot_description': Command(['xacro ', LaunchConfiguration('robot_description')])}
+        ]
+    )
 
-        # Planning and execution
-        self.planning_pub = self.create_publisher(Plan, 'planning/goal', 10)
-        self.execution_sub = self.create_subscription(ExecutionStatus, 'execution/status', self.execution_callback, 10)
-
-        # Main processing timer
-        self.main_timer = self.create_timer(0.05, self.main_processing_loop)
-
-        # Internal state
-        self.current_robot_state = None
-        self.current_plan = None
-        self.ai_goals = []
-
-    def main_processing_loop(self):
-        """Main processing loop coordinating AI and robot control"""
-        if self.current_robot_state is None:
-            return
-
-        # Process AI goals and generate robot commands
-        if self.ai_goals:
-            # Plan based on AI goals
-            plan = self.generate_plan_from_goals(self.ai_goals, self.current_robot_state)
-
-            # Execute plan
-            cmd = self.plan_to_robot_command(plan)
-            self.robot_command_pub.publish(cmd)
-
-    def ai_feedback_callback(self, msg):
-        """Handle feedback from AI system"""
-        self.get_logger().info(f'AI feedback: {msg.status}')
-        # Process AI feedback and update internal state
-
-    def robot_state_callback(self, msg):
-        """Update current robot state"""
-        self.current_robot_state = msg
-
-    def execution_callback(self, msg):
-        """Handle execution status updates"""
-        if msg.status == ExecutionStatus.COMPLETED:
-            # Remove completed goal
-            if self.ai_goals:
-                self.ai_goals.pop(0)
+    return LaunchDescription(declared_arguments + [robot_state_publisher_node])
 ```
 
-## Knowledge Check
+## Weekly Breakdown: Weeks 3-5
 
-1. Explain the difference between fan-in and fan-out communication patterns in ROS 2.
-2. Describe how Quality of Service (QoS) profiles affect communication reliability.
-3. What are the key components of a URDF file for humanoid robots?
+### Week 3: ROS 2 Architecture and Core Concepts
+- ROS 2 vs ROS 1 differences
+- Nodes, topics, services fundamentals
+- Quality of Service (QoS) policies
+- Basic publisher/subscriber patterns
 
-## Hands-On Exercise
+### Week 4: Advanced ROS 2 Concepts
+- Actions for goal-oriented communication
+- Parameters and configuration management
+- Launch files and system composition
+- Testing and debugging tools
 
-1. Create a ROS 2 node that implements the AI agent bridge pattern
-2. Design a URDF file for a simple humanoid robot with at least 6 degrees of freedom
-3. Implement a service that provides robot state information to multiple clients
-4. Test the system with different QoS configurations to observe behavior differences
+### Week 5: AI Integration with ROS 2
+- Bridging Python AI agents to ROS controllers using rclpy
+- Sensor data processing pipelines
+- Control command generation
+- URDF implementation for humanoid robots
+
+## Hands-On Exercises
+
+### Exercise 1: Custom Message Publisher/Subscriber
+Create a custom message type and implement a publisher and subscriber for robot sensor data.
+
+### Exercise 2: Service Implementation
+Implement a service that performs path planning based on start and goal positions.
+
+### Exercise 3: AI Controller Integration
+Create a node that uses a simple neural network to control robot movement based on sensor data.
+
+### Exercise 4: URDF Robot Model
+Create a URDF model for a simple humanoid robot with at least 10 joints.
 
 ## Summary
 
-This chapter has explored advanced ROS 2 communication patterns, focusing on the integration between Python-based AI agents and ROS-based robot controllers. The deep dive into topics, services, and URDF demonstrates how to build sophisticated Physical AI systems that can effectively bridge the gap between AI decision-making and physical robot control. Understanding these advanced patterns is crucial for developing robust and efficient Physical AI applications.
+This module has covered the core communication patterns in ROS 2: topics, services, and actions. You've learned how to implement each pattern and how to bridge AI agents to ROS controllers using rclpy. Additionally, you've gained an understanding of URDF for representing robot models, which is essential for humanoid robotics. These communication patterns form the "nervous system" of your robot, enabling coordinated behavior between different components.
 
-## Next Steps
-
-In the following chapters, we'll explore simulation environments, NVIDIA Isaac integration, and the implementation of advanced Physical AI systems for humanoid robotics.

@@ -3,6 +3,8 @@ title: "Chapter 10: Isaac ROS and Hardware-Accelerated Perception"
 sidebar_label: "Chapter 10: Isaac ROS Perception"
 ---
 
+
+
 # Chapter 10: Isaac ROS and Hardware-Accelerated Perception
 
 ## Learning Objectives
@@ -612,3 +614,4 @@ This chapter explored Isaac ROS and its hardware-accelerated perception capabili
 ## Next Steps
 
 In Chapter 11, we'll examine Nav2 and path planning for humanoid robots, building upon the perception foundation established here to enable intelligent navigation and movement planning.
+

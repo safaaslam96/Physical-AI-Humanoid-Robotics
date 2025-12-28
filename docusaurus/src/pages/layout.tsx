@@ -1,6 +1,5 @@
 import React from 'react';
-import Layout from '@theme/Layout';
-import ChatbotPopup from '../components/Chatbot/ChatbotPopup';
+import AIChatPopup from '../components/AIChatPopup/AIChatPopup';
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -8,10 +7,10 @@ interface RootLayoutProps {
 
 const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   return (
-    <Layout>
+    <>
       {children}
-      <ChatbotPopup />
-    </Layout>
+      <AIChatPopup />
+    </>
   );
 };
 

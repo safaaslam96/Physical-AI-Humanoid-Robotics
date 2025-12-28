@@ -3,6 +3,8 @@ title: "Appendix B: Software Installation and Configuration"
 sidebar_label: "Appendix B: Software Installation"
 ---
 
+
+
 # Appendix B: Software Installation and Configuration
 
 ## Overview
@@ -522,3 +524,4 @@ chmod +x ~/backup_ros_environment.sh
 ```
 
 This comprehensive software installation guide provides the foundation for developing advanced humanoid robots. Proper setup of this software stack is essential for implementing the algorithms and techniques described throughout this book, from basic perception and control to advanced AI and human-robot interaction capabilities.
+

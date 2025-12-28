@@ -17,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/safaaslam96/Physical-AI-Humanoid-Robotics/issues"
   },
-  "homepage": "https://github.com/safaaslam96/Physical-AI-Humanoid-Robotics#readme"
+  "homepage": "https://github.com/safaaslam96/Physical-AI-Humanoid-Robotics#readme",
+  "dependencies": {
+    "@docusaurus/core": "^3.9.2",
+    "@docusaurus/preset-classic": "^3.9.2"
+  }
 }
